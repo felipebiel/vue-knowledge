@@ -13,6 +13,21 @@ services:
       bash -c "
           npm install
           npm run dev"
+  
+  storybook:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+    ports:
+      - "6006:6006"
+    environment:
+      - BROWSER=none
+    command: >
+      bash -c "
+          npm install
+          npm run storybook -- --ci"
 
 networks:
   default:
