@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="w-full relative">
-            <!-- <side-menu></side-menu> -->
+            <side-menu></side-menu>
         </div>
         <div class="main-box" :class="{}">
             <!-- <toolbar-component></toolbar-component> -->
@@ -12,7 +12,9 @@
     </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import SideMenu from '@/layouts/side-menu/side-menu.vue';
+</script>
 
 <style scoped lang="scss">
 .main-box {
