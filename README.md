@@ -13,10 +13,27 @@ Para rodar o ambiente de desenvolvimento , pela primeira vez execute:
 make setup
 ```  
 
-Para rodar o ambiente em modo background:  
+Para rodar o ambiente em modo background:
+> O storybook roda juntamente do container da aplicação  
 
 ```shell
 make start
+```
+
+Para rodar apenas o serviço do front sem o storybook:
+
+```shell
+make start-front
+# or
+make start SERVICE=vue-knowledge-front
+```
+
+Para rodar apenas o serviço do storybook sem o front:
+
+```shell
+make start-storybook
+# or
+make start SERVICE=storybook
 ```
 
 Na primeira vez que esse comando é executado ele pode demorar a executar o front. Se pode observar os logs do comando utilizando o modo interativo ou o comando:  
@@ -28,16 +45,16 @@ make logs
 Para rodar o ambiente em modo interativo:  
 
 ```shell
-make start_no_detach
+make start-no-detach
 ```
  
-Para acessar o terminal interativo do container, rode:  
+Para acessar o terminal interativo do container front, rode:  
 
 ```shell
 make shell
 ```
 
-O make shell é recomendado para termos mais controle da aplicação. Dentro dele se pode executar diretamente o comando `npm run serve` e instalar libs necessárias.  
+O make shell é recomendado para termos mais controle da aplicação. Dentro dele se pode executar diretamente o comando `npm run serve` e/ou instalar libs necessárias.  
 
 > O storybook roda juntamente do container da aplicação
 > ### Porta exposta pelo container: 8080 e storybook 6006
