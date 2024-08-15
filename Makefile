@@ -1,7 +1,10 @@
 #!/bin/bash
 .PHONY: default
 .SILENT:
-
+# VARIABLES 
+SERVICE ?=all
+FRONT_SERVICE ?=vue-knowledge-front
+STORYBOOK_SERVICE ?=storybook
 
 default:
 
@@ -9,9 +12,19 @@ setup:
 	docker network create vue-knowledge-front-network || true
 
 start:
+ifeq ($(SERVICE), all)
 	docker-compose -f docker-compose.yml up --detach --force-recreate --build --remove-orphans
+else
+	docker-compose -f docker-compose.yml up $(SERVICE) --detach --force-recreate --build --remove-orphans	
+endif
 
-start_no_detach:
+start-front: 
+	docker-compose -f docker-compose.yml up $(FRONT_SERVICE) --detach --force-recreate --build --remove-orphans
+
+start-storybook: 
+	docker-compose -f docker-compose.yml up $(STORYBOOK_SERVICE) --detach --force-recreate --build --remove-orphans
+
+start-no-detach:
 	docker-compose -f docker-compose.yml up --force-recreate --build --remove-orphans
 
 stop:
