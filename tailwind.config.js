@@ -6,6 +6,7 @@ export default {
             colors: {
                 primary: '#287bff',
                 link: '#42b983',
+                'body-color': '#f5f5f5',
             },
         },
     },
