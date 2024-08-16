@@ -1,11 +1,11 @@
 <template>
     <div>
-        <div class="w-full relative">
+        <div class="side__box">
             <side-menu></side-menu>
         </div>
-        <div class="main-box" :class="activeClass">
+        <div class="main__box" :class="activeClass">
             <toolbar-component></toolbar-component>
-            <div class="content-box p-5">
+            <div class="main__box__content">
                 <router-view></router-view>
             </div>
         </div>
@@ -21,22 +21,21 @@ import { computed } from 'vue';
 const sideMenu = sideMenuStore();
 
 const activeClass = computed(() => {
-    return sideMenu.toggle ? 'active' : '';
+    return sideMenu.toggle ? 'main__box--active' : '';
 });
 </script>
 
 <style scoped lang="scss">
-.main-box {
-    @apply absolute w-full left-0 lg:w-[calc(100%-300px)] lg:left-[300px] min-h-screen duration-500 bg-body-color;
-    &.active {
-        @apply left-[80px] w-[calc(100%-80px)];
-        @media screen and (max-width: 991px) {
-            @apply left-[300px];
-        }
-        /* @media screen and (max-width: 767px) {
-            left: 85%;
-            color: $white;
-        } */
+.side__box {
+    @apply w-full relative;
+}
+.main__box {
+    @apply w-full pl-0 lg:pl-[300px] min-h-screen duration-500 bg-body-color;
+    &__content {
+        @apply p-5;
+    }
+    &--active {
+        @apply sm:pl-[300px] lg:pl-[80px];
     }
 }
 </style>

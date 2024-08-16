@@ -1,36 +1,39 @@
 <template>
-    <div class="navigation" :class="activeClass">
-        <ul>
+    <nav class="navigation" :class="activeClass">
+        <button class="navigation__close" @click="toogleFunction()">
+            <span class="material-icons navigation__close--icon"> close </span>
+        </button>
+        <ul class="navigation__links">
             <li>
-                <router-link :to="{ name: 'Home' }">
-                    <span class="icon"><span class="material-icons"> business </span></span>
+                <router-link :to="{ name: 'Home' }" as="a">
+                    <span class="icon"><span class="material-icons navigation__links--icon"> business </span></span>
                     <span class="title">Empresa</span>
                 </router-link>
             </li>
             <li v-for="(link, index) in links" :key="index" :class="{ active: $route.name === link.routerName }">
                 <!-- Links Internos -->
-                <router-link :to="{ name: link.routerName }" v-if="!link.externalLink">
+                <router-link :to="{ name: link.routerName }" v-if="!link.externalLink" as="a">
                     <span class="icon">
-                        <span class="material-icons">{{ link.icon }} </span>
+                        <span class="material-icons navigation__links--icon">{{ link.icon }} </span>
                     </span>
                     <span class="title">{{ link.title }}</span>
                 </router-link>
                 <!-- Links Externos -->
                 <a :href="link.url" target="_blank" v-else>
                     <span class="icon">
-                        <span class="material-icons">{{ link.icon }} </span>
+                        <span class="material-icons navigation__links--icon">{{ link.icon }} </span>
                     </span>
                     <span class="title">{{ link.title }}</span>
                 </a>
             </li>
             <li>
-                <router-link :to="{ name: 'Home' }">
-                    <span class="icon"><span class="material-icons"> logout </span></span>
+                <router-link :to="{ name: 'Home' }" as="a">
+                    <span class="icon"><span class="material-icons navigation__links--icon"> logout </span></span>
                     <span class="title">Sair</span>
                 </router-link>
             </li>
         </ul>
-    </div>
+    </nav>
 </template>
 
 <script setup lang="ts">
@@ -39,24 +42,31 @@ import { LINKS_MENU } from '@/utils/constants';
 import { computed } from 'vue';
 
 const sideMenu = sideMenuStore();
+const { toogleFunction } = sideMenuStore();
 
 const links = computed(() => {
     return LINKS_MENU;
 });
 
 const activeClass = computed(() => {
-    return sideMenu.toggle ? 'active' : '';
+    return sideMenu.toggle ? 'navigation--active' : '';
 });
 </script>
 
 <style lang="scss" scoped>
 .navigation {
-    @apply fixed left-[-300px] lg:left-0 h-full w-[300px] bg-primary border-l-[10px] border-l-primary duration-500 overflow-hidden;
-    &.active {
-        @apply w-full sm:w-[300px] lg:w-[80px] left-0 z-10;
+    @apply fixed left-[-300px] lg:left-0 h-full w-[300px] bg-primary border-l-[10px] border-l-primary duration-500 overflow-hidden z-10;
+    &__close {
+        @apply z-20 absolute top-4 right-5 block sm:hidden;
+        &--icon {
+            @apply text-white text-4xl;
+        }
+    }
+    &--active {
+        @apply w-full sm:w-[300px] lg:w-[80px] left-0;
     }
 
-    ul {
+    &__links {
         @apply absolute top-0 left-0 w-full;
         li {
             @apply relative w-full list-none rounded-l-full hover:bg-body-color;
@@ -82,7 +92,7 @@ const activeClass = computed(() => {
                 @apply relative w-full flex no-underline text-white hover:text-primary;
                 .icon {
                     @apply relative min-w-[60px] h-[60px] text-center flex items-center pl-4;
-                    .material-icons {
+                    .navigation__links--icon {
                         @apply text-3xl;
                     }
                 }
