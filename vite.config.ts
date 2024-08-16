@@ -10,11 +10,19 @@ export default defineConfig({
     // setando a porta padrão
     server: {
         host: true,
-        port: 8080, // <-- Set your own server port here
+        port: 8080,
     },
     resolve: {
         alias: {
             '@': fileURLToPath(new URL('./src', import.meta.url)),
+        },
+    },
+    // Uso das variaveis diretamente no código
+    css: {
+        preprocessorOptions: {
+            scss: {
+                additionalData: '@import "@/scss/_variables.scss";',
+            },
         },
     },
 });

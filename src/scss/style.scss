@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import 'fonts.scss';
+@import 'variables.scss';
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: $font-family-primary;
+    background-color: $body-color;
+    height: 100vh;
+    overflow-x: hidden;
+}
