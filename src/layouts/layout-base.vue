@@ -30,7 +30,7 @@ const activeClass = computed(() => {
     @apply w-full relative;
 }
 .main__box {
-    @apply w-full pl-0 lg:pl-[300px] min-h-screen duration-500 bg-body-color;
+    @apply w-full pl-0 lg:pl-[300px] min-h-screen duration-500 bg-body-color dark:bg-zinc-700 dark:text-zinc-100;
     &__content {
         @apply p-5;
     }

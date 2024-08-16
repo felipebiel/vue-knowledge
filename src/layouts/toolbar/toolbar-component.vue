@@ -20,9 +20,10 @@ const darkMode = darkModeStore();
 
 <style lang="scss" scoped>
 .toolbar {
-    @apply w-full h-16 flex justify-between items-center py-2 px-4 bg-white;
+    @apply w-full h-16 flex justify-between items-center py-2 px-4 bg-white dark:bg-zinc-800;
     .toolbar__toggle {
         @apply relative w-12 h-12 flex justify-center items-center text-4xl cursor-pointer hover:bg-zinc-100 rounded-full;
+        @apply dark:hover:bg-zinc-700 dark:text-zinc-100;
     }
     .toolbar__functions {
         @apply relative flex items-center gap-4;
@@ -30,6 +31,7 @@ const darkMode = darkModeStore();
         .darkmode {
             &__button {
                 @apply w-12 h-12 text-primary hover:bg-zinc-100 rounded-full;
+                @apply dark:hover:bg-zinc-700 dark:text-zinc-100;
             }
             &__icon {
                 @apply text-3xl;
@@ -37,7 +39,7 @@ const darkMode = darkModeStore();
         }
 
         .user__icon {
-            @apply text-[2.5rem] text-primary flex;
+            @apply text-[2.5rem] text-primary flex dark:text-zinc-100;
         }
     }
 }
