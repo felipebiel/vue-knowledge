@@ -10,7 +10,7 @@
                     <span class="title">Empresa</span>
                 </router-link>
             </li>
-            <li v-for="(link, index) in links" :key="index" :class="{ active: $route.name === link.routerName }">
+            <li v-for="(link, index) in links" :key="index" :class="{ active: route.name === link.routerName }">
                 <!-- Links Internos -->
                 <router-link :to="{ name: link.routerName }" v-if="!link.externalLink" as="a">
                     <span class="icon">
@@ -40,6 +40,9 @@
 import { sideMenuStore } from '@/stores/side-menu';
 import { LINKS_MENU } from '@/utils/constants';
 import { computed } from 'vue';
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
 
 const sideMenu = sideMenuStore();
 const { toogleFunction } = sideMenuStore();
@@ -55,7 +58,9 @@ const activeClass = computed(() => {
 
 <style lang="scss" scoped>
 .navigation {
-    @apply fixed left-[-300px] lg:left-0 h-full w-[300px] bg-primary border-l-[10px] border-l-primary duration-500 overflow-hidden z-10;
+    @apply fixed left-[-300px] lg:left-0 h-full w-[300px] bg-primary  border-l-[10px] border-l-primary duration-500 overflow-hidden z-10;
+    /* dark-mode */
+    @apply dark:bg-zinc-900 dark:border-l-zinc-900;
     &__close {
         @apply z-20 absolute top-4 right-5 block sm:hidden;
         &--icon {
@@ -69,12 +74,12 @@ const activeClass = computed(() => {
     &__links {
         @apply absolute top-0 left-0 w-full;
         li {
-            @apply relative w-full list-none rounded-l-full hover:bg-body-color;
+            @apply relative w-full list-none rounded-l-full hover:bg-body-color dark:hover:bg-zinc-700;
 
             &.active {
-                @apply bg-body-color;
+                @apply bg-body-color dark:bg-zinc-700;
                 a {
-                    @apply text-primary;
+                    @apply text-primary dark:text-white;
                 }
             }
 
@@ -89,7 +94,7 @@ const activeClass = computed(() => {
             }
 
             a {
-                @apply relative w-full flex no-underline text-white hover:text-primary;
+                @apply relative w-full flex no-underline text-white hover:text-primary dark:hover:text-white;
                 .icon {
                     @apply relative min-w-[60px] h-[60px] text-center flex items-center pl-4;
                     .navigation__links--icon {
@@ -107,14 +112,14 @@ const activeClass = computed(() => {
             &.active a::before {
                 @apply absolute right-0 top-[-50px] w-[50px] h-[50px] bg-transparent rounded-full pointer-events-none;
                 content: '';
-                box-shadow: 35px 35px 0 10px $body-color;
+                @apply shadow-[35px_35px_0_10px] shadow-body-color dark:shadow-zinc-700;
             }
 
             &:hover a::after,
             &.active a:after {
                 @apply absolute right-0 bottom-[-50px] w-[50px] h-[50px] bg-transparent rounded-full pointer-events-none;
                 content: '';
-                box-shadow: 35px -35px 0 10px $body-color;
+                @apply shadow-[35px_-35px_0_10px] shadow-body-color dark:shadow-zinc-700;
             }
         }
     }
