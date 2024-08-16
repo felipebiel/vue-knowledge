@@ -10,7 +10,7 @@
                     <span class="title">Empresa</span>
                 </router-link>
             </li>
-            <li v-for="(link, index) in links" :key="index" :class="{ active: $route.name === link.routerName }">
+            <li v-for="(link, index) in links" :key="index" :class="{ active: route.name === link.routerName }">
                 <!-- Links Internos -->
                 <router-link :to="{ name: link.routerName }" v-if="!link.externalLink" as="a">
                     <span class="icon">
@@ -40,6 +40,9 @@
 import { sideMenuStore } from '@/stores/side-menu';
 import { LINKS_MENU } from '@/utils/constants';
 import { computed } from 'vue';
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
 
 const sideMenu = sideMenuStore();
 const { toogleFunction } = sideMenuStore();

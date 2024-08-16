@@ -6,11 +6,12 @@ interface IState {
 
 export const darkModeStore = defineStore('darkMode', {
     state: (): IState => ({
-        isDarkMode: false,
+        isDarkMode: localStorage.getItem('darkmode') ? localStorage.getItem('darkmode') === 'true' : false,
     }),
     actions: {
         async toogleDarkMode() {
             this.isDarkMode = !this.isDarkMode;
+            localStorage.setItem('darkmode', this.isDarkMode.toString());
         },
     },
 });
