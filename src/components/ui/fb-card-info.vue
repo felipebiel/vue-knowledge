@@ -1,10 +1,10 @@
 <template>
     <div class="card-info">
         <div>
-            <div class="numbers" v-tippy="numbersTippy">{{ truncateString(numbers, truncate) }}</div>
-            <div class="card-name">{{ title }}</div>
+            <div class="card-info__numbers" v-tippy="numbersTippy">{{ truncateString(String(numbers), truncate) }}</div>
+            <div class="card-info__name">{{ title }}</div>
         </div>
-        <div class="icon-bx">
+        <div class="card-info__icon-bx">
             <span class="material-icons"> {{ icon }} </span>
         </div>
     </div>
@@ -14,15 +14,17 @@
 import { truncateString } from '@/utils';
 import { computed } from 'vue';
 
-const props = defineProps<{
-    numbers: string;
-    title: number;
+export interface CardInfoProps {
+    numbers: number;
+    title: string;
     icon: string;
     truncateSize: number;
-}>();
+}
+
+const props = withDefaults(defineProps<CardInfoProps>(), { truncateSize: 0 });
 
 const truncate = computed(() => {
-    return props.truncateSize > 0 ? props.truncateSize : props.numbers.length;
+    return props.truncateSize > 0 ? props.truncateSize : String(props.numbers).length;
 });
 const numbersTippy = computed(() => {
     return props.truncateSize > 0 ? props.numbers : false;
@@ -44,28 +46,28 @@ const numbersTippy = computed(() => {
     }
     &:hover {
         background-color: $primary-color;
-        .numbers,
-        .card-name {
+        .card-info__numbers,
+        .card-info__name {
             color: $text-primary;
         }
-        .icon-bx {
+        .card-info__icon-bx {
             .material-icons {
                 color: $text-primary;
             }
         }
     }
-    .numbers {
+    &__numbers {
         position: relative;
         font-size: 2.5em;
         font-weight: 500;
         color: $primary-color;
     }
-    .card-name {
+    &__name {
         color: $text-secundary;
         font-size: 1.1em;
         margin-top: 5px;
     }
-    .icon-bx {
+    &__icon-bx {
         .material-icons {
             font-size: 3.5em;
             color: $text-secundary;
