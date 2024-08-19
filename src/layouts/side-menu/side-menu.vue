@@ -6,30 +6,30 @@
         <ul class="navigation__links">
             <li>
                 <router-link :to="{ name: 'Home' }" as="a">
-                    <span class="icon"><span class="material-icons navigation__links--icon"> business </span></span>
-                    <span class="title">Empresa</span>
+                    <span class="navigation__icon"><span class="material-icons navigation__material-icon"> business </span></span>
+                    <span class="navigation__title">Empresa</span>
                 </router-link>
             </li>
-            <li v-for="(link, index) in links" :key="index" :class="{ active: route.name === link.routerName }">
+            <li v-for="(link, index) in links" :key="index" :class="{ 'navigation__link-active': route.name === link.routerName }">
                 <!-- Links Internos -->
                 <router-link :to="{ name: link.routerName }" v-if="!link.externalLink" as="a">
-                    <span class="icon">
-                        <span class="material-icons navigation__links--icon">{{ link.icon }} </span>
+                    <span class="navigation__icon">
+                        <span class="material-icons navigation__material-icon">{{ link.icon }} </span>
                     </span>
-                    <span class="title">{{ link.title }}</span>
+                    <span class="navigation__title">{{ link.title }}</span>
                 </router-link>
                 <!-- Links Externos -->
                 <a :href="link.url" target="_blank" v-else>
-                    <span class="icon">
-                        <span class="material-icons navigation__links--icon">{{ link.icon }} </span>
+                    <span class="navigation__icon">
+                        <span class="material-icons navigation__material-icon">{{ link.icon }} </span>
                     </span>
-                    <span class="title">{{ link.title }}</span>
+                    <span class="navigation__title">{{ link.title }}</span>
                 </a>
             </li>
             <li>
                 <router-link :to="{ name: 'Home' }" as="a">
-                    <span class="icon"><span class="material-icons navigation__links--icon"> logout </span></span>
-                    <span class="title">Sair</span>
+                    <span class="navigation__icon"><span class="material-icons navigation__material-icon"> logout </span></span>
+                    <span class="navigation__title">Sair</span>
                 </router-link>
             </li>
         </ul>
@@ -63,7 +63,7 @@ const activeClass = computed(() => {
     @apply dark:bg-zinc-900 dark:border-l-zinc-900;
     &__close {
         @apply z-20 absolute top-4 right-5 block sm:hidden;
-        &--icon {
+        &__material-icon {
             @apply text-white text-4xl;
         }
     }
@@ -76,7 +76,7 @@ const activeClass = computed(() => {
         li {
             @apply relative w-full list-none rounded-l-full hover:bg-body-color dark:hover:bg-zinc-700;
 
-            &.active {
+            &.navigation__link-active {
                 @apply bg-body-color dark:bg-zinc-700;
                 a {
                     @apply text-primary dark:text-white;
@@ -88,35 +88,35 @@ const activeClass = computed(() => {
                 a {
                     @apply flex items-center;
                 }
-                .title {
+                .navigation__title {
                     @apply text-4xl;
                 }
             }
 
             a {
                 @apply relative w-full flex no-underline text-white hover:text-primary dark:hover:text-white;
-                .icon {
+                .navigation__icon {
                     @apply relative min-w-[60px] h-[60px] text-center flex items-center pl-4;
-                    .navigation__links--icon {
+                    .navigation__material-icon {
                         @apply text-3xl;
                     }
                 }
 
-                .title {
+                .navigation__title {
                     @apply relative py-4 px-0 pl-4 leading-8;
                 }
             }
 
             /* Curvas do lado de fora */
             &:hover a::before,
-            &.active a::before {
+            &.navigation__link-active a::before {
                 @apply absolute right-0 top-[-50px] w-[50px] h-[50px] bg-transparent rounded-full pointer-events-none;
                 content: '';
                 @apply shadow-[35px_35px_0_10px] shadow-body-color dark:shadow-zinc-700;
             }
 
             &:hover a::after,
-            &.active a:after {
+            &.navigation__link-active a:after {
                 @apply absolute right-0 bottom-[-50px] w-[50px] h-[50px] bg-transparent rounded-full pointer-events-none;
                 content: '';
                 @apply shadow-[35px_-35px_0_10px] shadow-body-color dark:shadow-zinc-700;
