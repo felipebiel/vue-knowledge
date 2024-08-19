@@ -10,7 +10,7 @@
 
 <script setup lang="ts">
 export interface CardInfoProps {
-    titleType: 'title' | 'subtitle';
+    titleType?: 'title' | 'subtitle';
 }
 
 withDefaults(defineProps<CardInfoProps>(), { titleType: 'title' });
