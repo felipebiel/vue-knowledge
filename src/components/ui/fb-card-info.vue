@@ -15,7 +15,7 @@ import { truncateString } from '@/utils';
 import { computed } from 'vue';
 
 export interface CardInfoProps {
-    numbers: number;
+    numbers: string;
     title: string;
     icon: string;
     truncateSize: number;
@@ -33,44 +33,30 @@ const numbersTippy = computed(() => {
 
 <style scoped lang="scss">
 .card-info {
-    position: relative;
-    background-color: $white;
-    padding: 30px;
-    border-radius: 20px;
-    display: flex;
-    justify-content: space-between;
-    cursor: pointer;
-    box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
-    @media screen and (max-width: 767px) {
-        padding: 20px;
-    }
+    @apply relative bg-white p-5 sm:p-7 rounded-3xl flex justify-between cursor-pointer shadow-app;
+    @apply dark:bg-zinc-600;
     &:hover {
-        background-color: $primary-color;
+        @apply bg-primary dark:bg-zinc-500;
+
         .card-info__numbers,
         .card-info__name {
-            color: $text-primary;
+            @apply text-white dark:text-zinc-50;
         }
         .card-info__icon-bx {
             .material-icons {
-                color: $text-primary;
+                @apply text-white dark:text-zinc-50;
             }
         }
     }
     &__numbers {
-        position: relative;
-        font-size: 2.5em;
-        font-weight: 500;
-        color: $primary-color;
+        @apply text-4xl font-normal text-primary dark:text-zinc-50;
     }
     &__name {
-        color: $text-secundary;
-        font-size: 1.1em;
-        margin-top: 5px;
+        @apply text-secundary text-lg mt-2;
     }
     &__icon-bx {
         .material-icons {
-            font-size: 3.5em;
-            color: $text-secundary;
+            @apply text-6xl text-secundary;
         }
     }
 }

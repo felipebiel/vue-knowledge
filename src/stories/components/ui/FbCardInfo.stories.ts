@@ -12,7 +12,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
     args: {
-        numbers: 1234,
+        numbers: '1234',
         icon: 'info',
         title: 'Valor',
     },
@@ -20,7 +20,7 @@ export const Default: Story = {
 
 export const Truncate: Story = {
     args: {
-        numbers: 12345678910,
+        numbers: '12345678910',
         icon: 'info',
         title: 'Valor',
         truncateSize: 5,
