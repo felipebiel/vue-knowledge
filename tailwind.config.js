@@ -6,8 +6,12 @@ export default {
         extend: {
             colors: {
                 primary: '#287bff',
+                secundary: '#999',
                 link: '#42b983',
                 'body-color': '#f5f5f5',
+            },
+            boxShadow: {
+                app: '0 7px 25px rgba(0, 0, 0, 0.08)',
             },
         },
     },
