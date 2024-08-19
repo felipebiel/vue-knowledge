@@ -1,10 +1,10 @@
 <template>
-    <div class="card-info">
+    <div class="fb-card-info">
         <div>
-            <div class="card-info__numbers" v-tippy="numbersTippy">{{ truncateString(String(numbers), truncate) }}</div>
-            <div class="card-info__name">{{ title }}</div>
+            <div class="fb-card-info__numbers" v-tippy="numbersTippy">{{ truncateString(String(numbers), truncate) }}</div>
+            <div class="fb-card-info__name">{{ title }}</div>
         </div>
-        <div class="card-info__icon-bx">
+        <div class="fb-card-info__icon-bx">
             <span class="material-icons"> {{ icon }} </span>
         </div>
     </div>
@@ -32,17 +32,17 @@ const numbersTippy = computed(() => {
 </script>
 
 <style scoped lang="scss">
-.card-info {
+.fb-card-info {
     @apply relative bg-white p-5 sm:p-7 rounded-3xl flex justify-between cursor-pointer shadow-app;
     @apply dark:bg-zinc-600;
     &:hover {
         @apply bg-primary dark:bg-zinc-500;
 
-        .card-info__numbers,
-        .card-info__name {
+        .fb-card-info__numbers,
+        .fb-card-info__name {
             @apply text-white dark:text-zinc-50;
         }
-        .card-info__icon-bx {
+        .fb-card-info__icon-bx {
             .material-icons {
                 @apply text-white dark:text-zinc-50;
             }
