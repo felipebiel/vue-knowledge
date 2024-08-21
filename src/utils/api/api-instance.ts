@@ -1,30 +1,27 @@
-import axios from 'axios';
+import axios, { AxiosHeaders, AxiosInstance } from 'axios';
 import applyCaseMiddleware from 'axios-case-converter';
-import { gitHubBaseURL } from '@/utils/api/end-points';
 
-export const headerAxios = () => {
+export const headerAxios = (): AxiosHeaders => {
     // if use tokens on Headers
     const token = '';
-    let config = {};
+    let config = new AxiosHeaders();
     if (token) {
-        config = {
-            Authorization: `Bearer ${token}`,
-        };
+        config.set('Authorization', `Bearer ${token}`);
     }
 
     return config;
 };
 
-export const configAxiosGithub = () =>
+export const configAxios = (baseURL: string): AxiosInstance =>
     applyCaseMiddleware(
         axios.create({
             headers: headerAxios(),
-            baseURL: gitHubBaseURL,
+            baseURL: baseURL,
         }),
     );
 
-export const configAxiosGithubWithoutConverter = () =>
+export const configAxiosWithoutConverter = (baseURL: string): AxiosInstance =>
     axios.create({
         headers: headerAxios(),
-        baseURL: gitHubBaseURL,
+        baseURL: baseURL,
     });
