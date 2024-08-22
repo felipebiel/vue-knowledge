@@ -12,8 +12,8 @@ export interface IconProps {
     viewBox?: string;
     color?: string;
 }
-const props = withDefaults(defineProps<IconProps>(), { name: 'info', size: '16px', color: 'red' });
-
+const props = withDefaults(defineProps<IconProps>(), { name: 'info', size: '16px', color: 'gray' });
+console.log(Object.keys(customIcons));
 const viewBoxIcon = computed(() => {
     return customIcons[props.name] && customIcons[props.name].viewBox ? customIcons[props.name].viewBox : props.viewBox;
 });
