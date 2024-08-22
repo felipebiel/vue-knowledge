@@ -3,9 +3,8 @@
         <div v-if="isLoading">
             <fb-icon name="loading" class="animate-spin text-white" color="" view-box="0 0 100 101"></fb-icon>
         </div>
-        <div class="flex">
-            <slot> </slot>
-        </div>
+
+        <slot> </slot>
     </component>
 </template>
 
