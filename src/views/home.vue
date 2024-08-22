@@ -9,9 +9,9 @@
         <div class="mt-5 w-full grid grid-cols-1 md:grid-cols-2 gap-8">
             <fb-card>
                 <fb-title-bar>
-                    <template v-slot:left>Visualizações por ano</template>
+                    <template v-slot:left>Dólar Americano/Real Brasileiro</template>
                 </fb-title-bar>
-                <apexchart width="100%" type="bar" :options="options" :series="series"></apexchart>
+                <apexchart width="100%" type="area" ref="priceQuotesChart" :options="optionsQuotes" :series="series"></apexchart>
             </fb-card>
 
             <fb-card>
@@ -29,43 +29,83 @@ import FbCardInfo from '@/components/ui/fb-card-info.vue';
 import FbCard from '@/components/ui/fb-card.vue';
 import FbTitleBar from '@/components/ui/fb-title-bar.vue';
 import { getRepositoryLanguages } from '@/services/api/github';
+import { getPriceQuotesUSDBRL } from '@/services/api/price-quotes';
 import { getKeysAndValues } from '@/utils';
 
 import { onMounted, ref } from 'vue';
 import { VueApexChartsComponent } from 'vue3-apexcharts';
+import moment from 'moment';
+import { ApexOptions } from 'apexcharts';
 
-interface ChartConfig {
-    chart?: {
-        id?: string;
-    };
-    labels?: string[];
-}
+// price quotes chart logic
+const priceQuotesChart = ref<VueApexChartsComponent>();
 
-const options = ref<Object>({
+const optionsQuotes = ref<ApexOptions>({
     chart: {
         id: 'views-by-year',
     },
     xaxis: {
-        categories: ['2019', '2020', '2021', '2022', '2023'],
+        labels: {
+            formatter: (value: any) => {
+                return moment.unix(value).format('DD/MMM');
+            },
+        },
+    },
+    yaxis: {
+        labels: {
+            formatter: function (val: number) {
+                return 'R$ ' + val.toFixed(2);
+            },
+        },
+    },
+    dataLabels: {
+        enabled: false,
+    },
+    markers: {
+        size: 0,
+    },
+    fill: {
+        type: 'gradient',
+        gradient: {
+            shadeIntensity: 1,
+            inverseColors: false,
+            opacityFrom: 0.5,
+            opacityTo: 0,
+            stops: [0, 90, 100],
+        },
     },
 });
-const series = ref<Array<Object>>([
-    {
-        name: 'Visualizações',
-        data: [1200, 1500, 1800, 2300, 2900],
-    },
-]);
+const series = ref<ApexAxisChartSeries>([]);
+
+const preparePriceQuotesChart = async () => {
+    try {
+        const priceQuotes = await getPriceQuotesUSDBRL();
+        const optionsCheck = optionsQuotes.value.xaxis;
+        if (optionsCheck) optionsCheck.categories = priceQuotes.map((price) => price.timestamp);
+        priceQuotesChart.value?.updateOptions(optionsQuotes.value);
+        priceQuotesChart.value?.updateSeries([
+            {
+                name: 'Valor',
+                data: priceQuotes.map((price) => price.ask),
+            },
+        ]);
+    } catch (error) {}
+};
 
 // languages chart logic
 const languagesChart = ref<VueApexChartsComponent>();
 
-const optionsLanguages = ref<Partial<ChartConfig>>({
+const optionsLanguages = ref<ApexOptions>({
     chart: {
         id: 'languages-by-year',
     },
-    labels: [],
+    tooltip: {
+        custom: ({ seriesIndex, w }) => {
+            return '<p class="p-2">' + w.globals.labels[seriesIndex] + '</p>';
+        },
+    },
 });
-const seriesLanguages = ref<Array<Number>>([]);
+const seriesLanguages = ref<ApexNonAxisChartSeries>([]);
 
 const prepareLanguagesChart = async () => {
     try {
@@ -79,6 +119,7 @@ const prepareLanguagesChart = async () => {
 };
 
 onMounted(async () => {
+    preparePriceQuotesChart();
     prepareLanguagesChart();
 });
 
