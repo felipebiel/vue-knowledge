@@ -30,6 +30,12 @@
             <fb-button size="sm">Meu botão</fb-button>
             <fb-button size="xs"> Meu botão </fb-button>
         </div>
+        <fb-title-bar class="my-4" title-type="subtitle">
+            <template v-slot:left>Customizado com tailwind</template>
+        </fb-title-bar>
+        <fb-button size="lg" class="bg-purple-800 italic hover:bg-purple-600 w-60 rounded-sm" @click="() => console.log('Ola mundo')"
+            >Meu botão</fb-button
+        >
     </div>
 </template>
 
