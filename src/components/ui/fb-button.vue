@@ -1,7 +1,7 @@
 <template>
     <component class="fb-button" :class="classesComputed" :is="props.as" :disabled="isDisabled || isLoading" v-bind="$attrs">
         <div v-if="isLoading">
-            <fb-icon name="loading" class="animate-spin text-white" color="" view-box="0 0 100 101"></fb-icon>
+            <fb-icon name="loading" class="animate-spin text-white"></fb-icon>
         </div>
 
         <slot> </slot>
@@ -9,14 +9,15 @@
 </template>
 
 <script setup lang="ts">
+import { buttonAs, sizes, buttonVariants } from '@/theme/constantes-theme';
 import FbIcon from './fb-icon.vue';
 import { ClassNameValue, twMerge } from 'tailwind-merge';
 import { computed, useAttrs } from 'vue';
 
 export interface ButtonProps {
-    as?: 'button' | 'a';
-    variant?: 'primary' | 'primary-outline' | 'primary-link' | 'secundary' | 'secundary-link';
-    size?: 'xs' | 'sm' | 'md' | 'lg';
+    as?: (typeof buttonAs)[number];
+    variant?: (typeof buttonVariants)[number];
+    size?: (typeof sizes)[number];
     isDisabled?: boolean;
     isLoading?: boolean;
 }
@@ -33,7 +34,7 @@ const props = withDefaults(defineProps<ButtonProps>(), {
 
 const BASE_CLASSES =
     'flex items-center justify-center gap-2 border-none rounded-md shadow-none cursor-pointer font-semibold hover:opacity-80 duration-300';
-const DISABLED_LOADING = 'opacity-80 bg-gray-500 hover:bg-gray-500 cursor-not-allowed';
+const DISABLED_LOADING = 'opacity-80 bg-gray-500 hover:bg-gray-500 cursor-not-allowed text-white border-none no-underline shadow-none';
 
 const classesVariants = {
     primary: 'text-white bg-primary',
