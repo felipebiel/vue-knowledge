@@ -1,5 +1,6 @@
 export const LINKS_MENU = [
     { path: '/home', routerName: 'Home', icon: 'home', title: 'Dashboard', externalLink: false, url: '' },
+    { path: '/component-examples', routerName: 'ComponentExamples', icon: 'widgets', title: 'Componentes', externalLink: false, url: '' },
     { path: '', routerName: '', icon: 'question_mark', title: 'Ajuda', externalLink: false, url: '' },
     {
         path: '',
