@@ -58,11 +58,11 @@ const activeClass = computed(() => {
 
 <style lang="scss" scoped>
 .navigation {
-    @apply fixed left-[-300px] lg:left-0 h-full w-[300px] bg-primary  border-l-[10px] border-l-primary duration-500 overflow-hidden z-10;
+    @apply fixed left-[-300px] lg:left-0 h-full w-[300px] bg-primary  border-l-[10px] border-l-primary duration-500 overflow-hidden z-20;
     /* dark-mode */
     @apply dark:bg-zinc-900 dark:border-l-zinc-900;
     &__close {
-        @apply z-20 absolute top-4 right-5 block sm:hidden;
+        @apply z-20 absolute top-4 right-5 block sm:hidden text-white;
         &__material-icon {
             @apply text-white text-4xl;
         }
