@@ -1,25 +1,27 @@
 <template>
     <transition name="custom-classes-transition">
-        <div id="modal" class="modal-mask" v-show="show" transition="modal">
-            <div class="modal-wrapper">
-                <div class="modal-header">
-                    <a class="close-modal" @click="close()">
-                        <span class="material-icons-outlined"> close </span>
-                    </a>
-                    <p class="header"><slot name="header">Atenção</slot></p>
-                </div>
-                <div class="modal-container">
-                    <div class="modal-body" :class="{ 'padding-body': paddingBody }">
-                        <slot name="body"> default body </slot>
+        <Teleport to="body">
+            <div id="modal" class="modal-mask" v-if="show" transition="modal">
+                <div class="modal-wrapper">
+                    <div class="modal-header">
+                        <a class="close-modal" @click="close()">
+                            <span class="material-icons-outlined"> close </span>
+                        </a>
+                        <p class="header"><slot name="header">Atenção</slot></p>
+                    </div>
+                    <div class="modal-container">
+                        <div class="modal-body" :class="{ 'padding-body': paddingBody }">
+                            <slot name="body"> default body </slot>
+                        </div>
+                    </div>
+                    <div class="modal-footer" v-if="showFooter">
+                        <slot name="footer">
+                            <fb-button @click="close()">OK</fb-button>
+                        </slot>
                     </div>
                 </div>
-                <div class="modal-footer" v-if="showFooter">
-                    <slot name="footer">
-                        <fb-button @click="close()">OK</fb-button>
-                    </slot>
-                </div>
             </div>
-        </div>
+        </Teleport>
     </transition>
 </template>
 
@@ -50,8 +52,6 @@ const mobileView = (value: string): string => {
 };
 
 const mobileWidth = mobileView(props.width);
-
-console.log(mobileWidth);
 </script>
 
 <style scoped lang="scss">
