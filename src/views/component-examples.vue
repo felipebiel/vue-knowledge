@@ -75,6 +75,16 @@
                 </template>
             </fb-table>
         </fb-card>
+
+        <fb-card>
+            <fb-button @click="openModal">Abrir Modal</fb-button>
+            <fb-modal width="650px" :show="self.showModal" @close="self.showModal = false">
+                <template v-slot:header>Todos os registros</template>
+                <template v-slot:body>
+                    <fb-table :items="self.tableData" :headers="self.headersTable"></fb-table>
+                </template>
+            </fb-modal>
+        </fb-card>
     </div>
 </template>
 
@@ -82,8 +92,10 @@
 import FbTitleBar from '@/components/ui/fb-title-bar.vue';
 import FbButton from '@/components/ui/fb-button.vue';
 import FbTable from '@/components/ui/fb-table.vue';
-import { reactive } from 'vue';
 import FbCard from '@/components/ui/fb-card.vue';
+import FbModal from '@/components/ui/fb-modal.vue';
+
+import { reactive } from 'vue';
 
 const self = reactive({
     headersTable: [
@@ -106,7 +118,12 @@ const self = reactive({
         Cancelado: 'bg-red-500',
         Estornado: 'bg-zinc-500',
     },
+    showModal: false,
 });
+
+const openModal = () => {
+    self.showModal = true;
+};
 </script>
 
 <style scoped></style>
