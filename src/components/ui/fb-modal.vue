@@ -1,40 +1,62 @@
 <template>
-    <transition name="custom-classes-transition">
+    <transition name="modal-animation">
         <Teleport to="body">
-            <div id="modal" class="modal-mask" v-if="show" transition="modal">
-                <div class="modal-wrapper">
-                    <div class="modal-header">
-                        <a class="close-modal" @click="close()">
-                            <span class="material-icons-outlined"> close </span>
-                        </a>
-                        <p class="header"><slot name="header">Atenção</slot></p>
-                    </div>
-                    <div class="modal-container">
-                        <div class="modal-body" :class="{ 'padding-body': paddingBody }">
+            <div class="fb-modal" :class="{ 'is-open': isOpen, 'is-visible': isVisible }">
+                <div :class="{ 'fb-modal__overlay': isOpen }" :style="{ transitionDuration: `${speed}ms` }"></div>
+                <transition name="modal-inner">
+                    <div v-if="isOpen" class="fb-modal__content">
+                        <div class="fb-modal__header">
+                            <a class="fb-modal__close-modal" @click="close()">
+                                <span class="material-icons-outlined"> close </span>
+                            </a>
+                            <slot name="header">Atenção</slot>
+                        </div>
+
+                        <div class="fb-modal__body" :class="{ 'padding-body': paddingBody }">
                             <slot name="body"> default body </slot>
                         </div>
+
+                        <div class="fb-modal__footer" v-if="showFooter">
+                            <slot name="footer">
+                                <fb-button @click="close()">OK</fb-button>
+                            </slot>
+                        </div>
                     </div>
-                    <div class="modal-footer" v-if="showFooter">
-                        <slot name="footer">
-                            <fb-button @click="close()">OK</fb-button>
-                        </slot>
-                    </div>
-                </div>
+                </transition>
             </div>
         </Teleport>
     </transition>
 </template>
 
 <script setup lang="ts">
+import { onMounted, ref, watch } from 'vue';
 import FbButton from './fb-button.vue';
 export interface ModalProps {
-    show: boolean;
+    isOpen: boolean;
     showFooter?: boolean;
     width?: string;
     paddingBody?: boolean;
+    speed?: number;
 }
-const props = withDefaults(defineProps<ModalProps>(), { width: '800px', showFooter: true, paddingBody: true });
+const props = withDefaults(defineProps<ModalProps>(), { isOpen: false, width: '800px', showFooter: true, paddingBody: true, speed: 1500 });
 const emit = defineEmits(['close']);
+
+const isVisible = ref<boolean>(false);
+
+onMounted(() => {
+    isVisible.value = props.isOpen;
+});
+
+watch(
+    () => props.isOpen,
+    (val) => {
+        if (val) {
+            isVisible.value = true;
+        } else {
+            setTimeout(() => (isVisible.value = false), props.speed);
+        }
+    },
+);
 
 const close = () => {
     emit('close', false);
@@ -55,107 +77,81 @@ const mobileWidth = mobileView(props.width);
 </script>
 
 <style scoped lang="scss">
-.header {
-    display: flex;
-    justify-content: center;
+.fb-modal {
+    @apply h-screen w-screen fixed top-0 left-0 invisible z-[1401] overflow-x-hidden overflow-y-auto flex justify-center items-center;
+
+    &.is-visible {
+        @apply visible;
+    }
+
+    &.is-open {
+        .fb-modal__overlay {
+            @apply opacity-40;
+        }
+    }
+
+    &__overlay {
+        @apply fixed inset-0 w-full bg-black select-none;
+        transition-duration: v-bind(speed) 'ms';
+    }
+
+    &__content {
+        @apply relative  mx-auto w-full z-[1401] overflow-auto flex flex-col shadow-overlayer-content rounded-3xl bg-white;
+        width: v-bind(width);
+        @media screen and (max-width: 992px) {
+            width: v-bind(mobileWidth);
+        }
+    }
+
+    &__header {
+        @apply px-5 pt-5 pb-0 z-[1401] text-primary text-center text-xl font-semibold;
+    }
+
+    &__close-modal {
+        @apply absolute top-4 right-0 mr-6 rounded-full z-[1601] cursor-pointer;
+    }
+
+    &__body {
+        @apply flex flex-col flex-1;
+        &.padding-body {
+            @apply p-10;
+        }
+    }
+    &__footer {
+        @apply p-5;
+    }
 }
 
-.modal-mask {
-    position: fixed;
-    z-index: 9998;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: table;
-    transition: opacity 0.3s ease;
+// CSS PARA ANIMAÇÃO DO TRANSITION
+.modal-animation-enter-active,
+.modal-animation-leave-active {
+    transition: opacity 0.3s cubic-bezier(0.52, 0.02, 0.19, 1.02);
 }
 
-.modal-wrapper {
-    display: table-cell;
-    vertical-align: middle;
-}
-
-.close-modal {
-    position: absolute;
-    right: 20px;
-    margin-top: 4px;
-    font-size: 20px;
-    cursor: pointer;
-    font-weight: 600;
-}
-.modal-container {
-    width: v-bind(width);
-    height: 'auto';
-    margin: 0px auto;
-    background-color: $white;
-    /* overflow-y: var(--scrollable); */
-    max-height: 'auto';
-}
-.modal-container::-webkit-scrollbar {
-    width: 10px; /* width of the entire scrollbar */
-}
-.modal-container::-webkit-scrollbar-track {
-    background: $white; /* color of the tracking area */
-}
-
-.modal-container::-webkit-scrollbar-thumb {
-    background-color: #dbdbdb; /* color of the scroll thumb */
-    border-radius: 10px; /* roundness of the scroll thumb */
-    border: 3px solid $white; /* creates padding around scroll thumb */
-}
-.modal-header {
-    margin: 0px auto;
-    width: v-bind(width);
-    margin-top: 0;
-    border-radius: 20px 20px 0px 0px;
-    background-color: white !important;
-    padding: 1.25rem /* 20px */;
-    font-size: 20px;
-    color: $primary-color;
-    font-weight: 600;
-    position: relative;
-}
-
-.modal-body.padding-body {
-    padding: 2.75rem /* 44px */;
-}
-.modal-footer {
-    margin: 0px auto;
-    width: v-bind(width);
-    background-color: $white !important;
-    padding: 10px;
-    border-radius: 2px;
-    border-radius: 0px 0px 20px 20px;
-    text-align: var(--footerPositionItens);
-    // border-top: 1px solid $text-secundary;
-    padding: 1.5rem /* 24px */;
-}
-
-.close-btn .material-icons-outlined {
-    color: $primary-color;
-}
-.modal-enter,
-.modal-leave {
+.modal-animation-enter-from,
+.modal-animation-leave-to {
     opacity: 0;
 }
 
-.modal-enter .modal-container,
-.modal-leave .modal-container {
-    -webkit-transform: scale(1.1);
-    transform: scale(1.1);
+.modal-inner-leave-to {
+    opacity: 0;
+    transform: scale(1);
 }
-@media screen and (max-width: 992px) {
-    .modal-header {
-        width: v-bind(mobileWidth);
+
+.modal-inner-enter-active {
+    animation: transition-open-close 0.3s;
+}
+.modal-inner-leave-active {
+    animation: transition-open-close 0.3s reverse;
+}
+@keyframes transition-open-close {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
     }
-    .modal-container {
-        width: v-bind(mobileWidth);
-        /* max-height: var(--mobHeight); */
-    }
-    .modal-footer {
-        width: v-bind(mobileWidth);
+    100% {
+        opacity: 1;
+        transform: scale(1);
     }
 }
 </style>
