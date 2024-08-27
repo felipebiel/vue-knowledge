@@ -3,7 +3,7 @@
         <div class="fb-modal" :class="{ 'is-open': isOpen, 'is-visible': isVisible }" @click="close">
             <div :class="{ 'fb-modal__overlay': isOpen }" :style="{ transitionDuration: `${speed}s` }"></div>
             <transition name="modal-inner" @enter="enterAnimation" @leave="leaveAnimation">
-                <div v-if="isOpen" class="fb-modal__content" :class="sizeComputed" @click.stop>
+                <div v-if="isOpen" class="fb-modal__content" :class="sizeComputed" :style="{ width: customSize ?? '' }" @click.stop>
                     <div class="fb-modal__header" v-if="showHeader">
                         <a class="fb-modal__close-modal" @click="close()">
                             <span class="material-icons-outlined"> close </span>
