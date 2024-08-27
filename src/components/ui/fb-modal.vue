@@ -1,44 +1,52 @@
 <template>
-    <transition name="modal-animation">
-        <Teleport to="body">
-            <div class="fb-modal" :class="{ 'is-open': isOpen, 'is-visible': isVisible }">
-                <div :class="{ 'fb-modal__overlay': isOpen }" :style="{ transitionDuration: `${speed}ms` }"></div>
-                <transition name="modal-inner">
-                    <div v-if="isOpen" class="fb-modal__content">
-                        <div class="fb-modal__header">
-                            <a class="fb-modal__close-modal" @click="close()">
-                                <span class="material-icons-outlined"> close </span>
-                            </a>
-                            <slot name="header">Atenção</slot>
-                        </div>
-
-                        <div class="fb-modal__body" :class="{ 'padding-body': paddingBody }">
-                            <slot name="body"> default body </slot>
-                        </div>
-
-                        <div class="fb-modal__footer" v-if="showFooter">
-                            <slot name="footer">
-                                <fb-button @click="close()">OK</fb-button>
-                            </slot>
-                        </div>
+    <Teleport to="body">
+        <div class="fb-modal" :class="{ 'is-open': isOpen, 'is-visible': isVisible }" @click="close">
+            <div :class="{ 'fb-modal__overlay': isOpen }" :style="{ transitionDuration: `${speed}s` }"></div>
+            <transition name="modal-inner" @enter="enterAnimation" @leave="leaveAnimation">
+                <div v-if="isOpen" class="fb-modal__content" @click.stop>
+                    <div class="fb-modal__header">
+                        <a class="fb-modal__close-modal" @click="close()">
+                            <span class="material-icons-outlined"> close </span>
+                        </a>
+                        <slot name="header">Atenção</slot>
                     </div>
-                </transition>
-            </div>
-        </Teleport>
-    </transition>
+
+                    <div class="fb-modal__body" :class="{ 'padding-body': paddingBody }">
+                        <slot name="body"> default body </slot>
+                    </div>
+
+                    <div class="fb-modal__footer" v-if="showFooter">
+                        <slot name="footer">
+                            <fb-button @click="close()">OK</fb-button>
+                        </slot>
+                    </div>
+                </div>
+            </transition>
+        </div>
+    </Teleport>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
 import FbButton from './fb-button.vue';
+import gsap from 'gsap';
+import { animationsModal } from '@/theme/constantes-theme';
 export interface ModalProps {
     isOpen: boolean;
     showFooter?: boolean;
     width?: string;
     paddingBody?: boolean;
     speed?: number;
+    animation?: (typeof animationsModal)[number];
 }
-const props = withDefaults(defineProps<ModalProps>(), { isOpen: false, width: '800px', showFooter: true, paddingBody: true, speed: 1500 });
+const props = withDefaults(defineProps<ModalProps>(), {
+    isOpen: false,
+    width: '800px',
+    showFooter: true,
+    paddingBody: true,
+    speed: 0.5,
+    animation: 'scale',
+});
 const emit = defineEmits(['close']);
 
 const isVisible = ref<boolean>(false);
@@ -53,7 +61,7 @@ watch(
         if (val) {
             isVisible.value = true;
         } else {
-            setTimeout(() => (isVisible.value = false), props.speed);
+            setTimeout(() => (isVisible.value = false), props.speed * 1000);
         }
     },
 );
@@ -67,13 +75,58 @@ const mobileView = (value: string): string => {
     if (~value.indexOf('%')) return value; // retornar valor boleano
     let val: number = parseInt(value.split('px')[0]);
     let number: number = 0;
-    if (val > 0 && val < 800) number = val * 0.4;
+    if (val > 0 && val <= 800) return '90%';
     else if (val >= 800) number = val * 0.6;
     val = val - number;
     return `${val}px`;
 };
 
 const mobileWidth = mobileView(props.width);
+interface AnimationOject {
+    initial: GSAPTweenVars;
+    enter: GSAPTweenVars;
+    leave: GSAPTweenVars;
+}
+const animations: { [key: string]: AnimationOject } = {
+    scale: {
+        initial: { opacity: 0, scale: 0.8 },
+        enter: { opacity: 1, scale: 1 },
+        leave: { opacity: 0, scale: 0.8 },
+    },
+    fadeIn: {
+        initial: { opacity: 0 },
+        enter: { opacity: 1 },
+        leave: { opacity: 0 },
+    },
+    dropIn: {
+        initial: { y: '-100vh', opacity: 0 },
+        enter: { y: '0', opacity: 1 },
+        leave: { y: '-100vh', opacity: 0 },
+    },
+    flip: {
+        initial: { scale: 0, rotateX: '-360deg', opacity: 0 },
+        enter: { scale: 1, rotateX: '0deg', opacity: 1 },
+        leave: { scale: 0, rotateX: '-360deg', opacity: 0 },
+    },
+    newspaper: {
+        initial: { scale: 0, rotate: '720deg', opacity: 0 },
+        enter: { scale: 1, rotate: '0deg', opacity: 1 },
+        leave: { scale: 0, rotate: '-720deg', opacity: 0 },
+    },
+};
+
+const timeline = gsap.timeline();
+const enterAnimation = (el: Element, done: () => void) => {
+    timeline.fromTo(el, animations[props.animation].initial, {
+        ...animations[props.animation].enter,
+        duration: props.speed,
+        onComplete: done,
+    });
+};
+
+const leaveAnimation = (el: Element, done: () => void) => {
+    timeline.to(el, { ...animations[props.animation].leave, duration: props.speed, onComplete: done });
+};
 </script>
 
 <style scoped lang="scss">
@@ -86,13 +139,8 @@ const mobileWidth = mobileView(props.width);
 
     &.is-open {
         .fb-modal__overlay {
-            @apply opacity-40;
+            @apply fixed inset-0 w-full bg-black select-none opacity-40;
         }
-    }
-
-    &__overlay {
-        @apply fixed inset-0 w-full bg-black select-none;
-        transition-duration: v-bind(speed) 'ms';
     }
 
     &__content {
@@ -119,39 +167,6 @@ const mobileWidth = mobileView(props.width);
     }
     &__footer {
         @apply p-5;
-    }
-}
-
-// CSS PARA ANIMAÇÃO DO TRANSITION
-.modal-animation-enter-active,
-.modal-animation-leave-active {
-    transition: opacity 0.3s cubic-bezier(0.52, 0.02, 0.19, 1.02);
-}
-
-.modal-animation-enter-from,
-.modal-animation-leave-to {
-    opacity: 0;
-}
-
-.modal-inner-leave-to {
-    opacity: 0;
-    transform: scale(1);
-}
-
-.modal-inner-enter-active {
-    animation: transition-open-close 0.3s;
-}
-.modal-inner-leave-active {
-    animation: transition-open-close 0.3s reverse;
-}
-@keyframes transition-open-close {
-    0% {
-        opacity: 0;
-        transform: scale(0.8);
-    }
-    100% {
-        opacity: 1;
-        transform: scale(1);
     }
 }
 </style>
