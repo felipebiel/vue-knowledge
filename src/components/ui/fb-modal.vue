@@ -17,7 +17,8 @@
 
                     <div class="fb-modal__footer" v-if="showFooter">
                         <slot name="footer">
-                            <fb-button @click="close()">OK</fb-button>
+                            <fb-button variant="primary-outline" @click="close()">Cancelar</fb-button>
+                            <fb-button @click="$emit('confirm')">Confirmar</fb-button>
                         </slot>
                     </div>
                 </div>
@@ -32,6 +33,8 @@ import FbButton from './fb-button.vue';
 import gsap from 'gsap';
 import { animationsModal, sizes } from '@/theme/constantes-theme';
 import { twMerge } from 'tailwind-merge';
+import { gsapAnimations } from '@/theme/gsap-animations';
+
 export interface ModalProps {
     isOpen: boolean;
     showFooter?: boolean;
@@ -51,7 +54,7 @@ const props = withDefaults(defineProps<ModalProps>(), {
     speed: 0.5,
     animation: 'scale',
 });
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close', 'confirm']);
 
 const classesSizes = {
     xs: 'w-96',
@@ -61,11 +64,10 @@ const classesSizes = {
     full: 'w-full h-screen rounded-none',
 };
 
+const BASE_SIZE = 'relative  mx-auto z-[1401] overflow-auto flex flex-col shadow-overlayer-content rounded-3xl bg-white';
+
 const sizeComputed = computed(() => {
-    return twMerge(
-        'relative  mx-auto z-[1401] overflow-auto flex flex-col shadow-overlayer-content rounded-3xl bg-white',
-        classesSizes[props.size],
-    );
+    return twMerge(BASE_SIZE, classesSizes[props.size]);
 });
 
 const isVisible = ref<boolean>(false);
@@ -89,62 +91,17 @@ const close = () => {
     emit('close', false);
 };
 
-// const mobileView = (value: string): string => {
-//     if (value == 'auto') return value;
-//     if (~value.indexOf('%')) return value; // retornar valor boleano
-//     let val: number = parseInt(value.split('px')[0]);
-//     let number: number = 0;
-//     if (val > 0 && val <= 800) return '90%';
-//     else if (val >= 800) number = val * 0.6;
-//     val = val - number;
-//     return `${val}px`;
-// };
-
-// const mobileWidth = mobileView(props.width);
-interface AnimationOject {
-    initial: GSAPTweenVars;
-    enter: GSAPTweenVars;
-    leave: GSAPTweenVars;
-}
-const animations: { [key: string]: AnimationOject } = {
-    scale: {
-        initial: { opacity: 0, scale: 0.8 },
-        enter: { opacity: 1, scale: 1 },
-        leave: { opacity: 0, scale: 0.8 },
-    },
-    fadeIn: {
-        initial: { opacity: 0 },
-        enter: { opacity: 1 },
-        leave: { opacity: 0 },
-    },
-    dropIn: {
-        initial: { y: '-100vh', opacity: 0 },
-        enter: { y: '0', opacity: 1 },
-        leave: { y: '-100vh', opacity: 0 },
-    },
-    flip: {
-        initial: { scale: 0, rotateX: '-360deg', opacity: 0 },
-        enter: { scale: 1, rotateX: '0deg', opacity: 1 },
-        leave: { scale: 0, rotateX: '-360deg', opacity: 0 },
-    },
-    newspaper: {
-        initial: { scale: 0, rotate: '720deg', opacity: 0 },
-        enter: { scale: 1, rotate: '0deg', opacity: 1 },
-        leave: { scale: 0, rotate: '-720deg', opacity: 0 },
-    },
-};
-
 const timeline = gsap.timeline();
 const enterAnimation = (el: Element, done: () => void) => {
-    timeline.fromTo(el, animations[props.animation].initial, {
-        ...animations[props.animation].enter,
+    timeline.fromTo(el, gsapAnimations[props.animation].initial, {
+        ...gsapAnimations[props.animation].enter,
         duration: props.speed,
         onComplete: done,
     });
 };
 
 const leaveAnimation = (el: Element, done: () => void) => {
-    timeline.to(el, { ...animations[props.animation].leave, duration: props.speed, onComplete: done });
+    timeline.to(el, { ...gsapAnimations[props.animation].leave, duration: props.speed, onComplete: done });
 };
 </script>
 
@@ -162,14 +119,6 @@ const leaveAnimation = (el: Element, done: () => void) => {
         }
     }
 
-    &__content {
-        /* @apply relative  mx-auto z-[1401] overflow-auto flex flex-col shadow-overlayer-content bg-white; */
-        /* width: v-bind(width); */
-        /* @media screen and (max-width: 992px) { */
-        /* width: v-bind(mobileWidth); */
-        /* } */
-    }
-
     &__header {
         @apply px-5 pt-5 pb-0 z-[1401] text-primary text-center text-xl font-semibold;
     }
@@ -185,7 +134,7 @@ const leaveAnimation = (el: Element, done: () => void) => {
         }
     }
     &__footer {
-        @apply p-5 flex justify-between gap-3;
+        @apply p-5 flex justify-center gap-6;
     }
 }
 </style>
