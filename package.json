@@ -16,6 +16,7 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@vueuse/core": "^11.0.3",
     "apexcharts": "^3.52.0",
     "axios": "^1.7.4",
     "axios-case-converter": "^1.1.1",

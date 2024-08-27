@@ -2,8 +2,8 @@
     <header class="toolbar">
         <button class="toolbar__toggle" @click="toogleFunction"><span class="material-icons"> menu </span></button>
         <div class="toolbar__functions">
-            <button class="darkmode__button" @click="darkMode.toogleDarkMode">
-                <span class="material-icons darkmode__icon"> {{ darkMode.isDarkMode ? 'light_mode' : 'dark_mode' }}</span>
+            <button class="darkmode__button" @click="toggleDark()">
+                <span class="material-icons darkmode__icon"> {{ isDark ? 'light_mode' : 'dark_mode' }}</span>
             </button>
             <span class="material-icons user__icon"> account_circle </span>
         </div>
@@ -11,11 +11,15 @@
 </template>
 
 <script setup lang="ts">
-import { darkModeStore } from '@/stores/dark-mode';
+// import { darkModeStore } from '@/stores/dark-mode';
 import { sideMenuStore } from '@/stores/side-menu';
+import { useDark, useToggle } from '@vueuse/core';
 
 const { toogleFunction } = sideMenuStore();
-const darkMode = darkModeStore();
+// const darkMode = darkModeStore();
+
+const isDark = useDark({ selector: 'body' });
+const toggleDark = useToggle(isDark);
 </script>
 
 <style lang="scss" scoped>
