@@ -64,7 +64,8 @@ const classesSizes = {
     full: 'w-full h-screen rounded-none',
 };
 
-const BASE_SIZE = 'relative  mx-auto z-[1401] overflow-auto flex flex-col shadow-overlayer-content rounded-3xl bg-white';
+const BASE_SIZE =
+    'relative  mx-auto z-[1401] overflow-auto flex flex-col shadow-overlayer-content rounded-3xl bg-white dark:bg-zinc-600 dark:opacity-100';
 
 const sizeComputed = computed(() => {
     return twMerge(BASE_SIZE, classesSizes[props.size]);
@@ -120,7 +121,7 @@ const leaveAnimation = (el: Element, done: () => void) => {
     }
 
     &__header {
-        @apply px-5 pt-5 pb-0 z-[1401] text-primary text-center text-xl font-semibold;
+        @apply px-5 pt-5 pb-0 z-[1401] text-primary dark:text-zinc-100 text-center text-xl font-semibold;
     }
 
     &__close-modal {
