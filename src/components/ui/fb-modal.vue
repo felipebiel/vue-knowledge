@@ -3,8 +3,8 @@
         <div class="fb-modal" :class="{ 'is-open': isOpen, 'is-visible': isVisible }" @click="close">
             <div :class="{ 'fb-modal__overlay': isOpen }" :style="{ transitionDuration: `${speed}s` }"></div>
             <transition name="modal-inner" @enter="enterAnimation" @leave="leaveAnimation">
-                <div v-if="isOpen" class="fb-modal__content" @click.stop>
-                    <div class="fb-modal__header">
+                <div v-if="isOpen" class="fb-modal__content" :class="sizeComputed" @click.stop>
+                    <div class="fb-modal__header" v-if="showHeader">
                         <a class="fb-modal__close-modal" @click="close()">
                             <span class="material-icons-outlined"> close </span>
                         </a>
@@ -27,27 +27,46 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import FbButton from './fb-button.vue';
 import gsap from 'gsap';
-import { animationsModal } from '@/theme/constantes-theme';
+import { animationsModal, sizes } from '@/theme/constantes-theme';
+import { twMerge } from 'tailwind-merge';
 export interface ModalProps {
     isOpen: boolean;
     showFooter?: boolean;
-    width?: string;
+    showHeader?: boolean;
+    size?: (typeof sizes)[number] | 'full';
+    customSize?: string;
     paddingBody?: boolean;
     speed?: number;
     animation?: (typeof animationsModal)[number];
 }
 const props = withDefaults(defineProps<ModalProps>(), {
     isOpen: false,
-    width: '800px',
+    size: 'md',
     showFooter: true,
+    showHeader: true,
     paddingBody: true,
     speed: 0.5,
     animation: 'scale',
 });
 const emit = defineEmits(['close']);
+
+const classesSizes = {
+    xs: 'w-96',
+    sm: 'w-[512px]',
+    md: 'w-[672px]',
+    lg: 'w-[768px]',
+    full: 'w-full h-screen rounded-none',
+};
+
+const sizeComputed = computed(() => {
+    return twMerge(
+        'relative  mx-auto z-[1401] overflow-auto flex flex-col shadow-overlayer-content rounded-3xl bg-white',
+        classesSizes[props.size],
+    );
+});
 
 const isVisible = ref<boolean>(false);
 
@@ -70,18 +89,18 @@ const close = () => {
     emit('close', false);
 };
 
-const mobileView = (value: string): string => {
-    if (value == 'auto') return value;
-    if (~value.indexOf('%')) return value; // retornar valor boleano
-    let val: number = parseInt(value.split('px')[0]);
-    let number: number = 0;
-    if (val > 0 && val <= 800) return '90%';
-    else if (val >= 800) number = val * 0.6;
-    val = val - number;
-    return `${val}px`;
-};
+// const mobileView = (value: string): string => {
+//     if (value == 'auto') return value;
+//     if (~value.indexOf('%')) return value; // retornar valor boleano
+//     let val: number = parseInt(value.split('px')[0]);
+//     let number: number = 0;
+//     if (val > 0 && val <= 800) return '90%';
+//     else if (val >= 800) number = val * 0.6;
+//     val = val - number;
+//     return `${val}px`;
+// };
 
-const mobileWidth = mobileView(props.width);
+// const mobileWidth = mobileView(props.width);
 interface AnimationOject {
     initial: GSAPTweenVars;
     enter: GSAPTweenVars;
@@ -131,7 +150,7 @@ const leaveAnimation = (el: Element, done: () => void) => {
 
 <style scoped lang="scss">
 .fb-modal {
-    @apply h-screen w-screen fixed top-0 left-0 invisible z-[1401] overflow-x-hidden overflow-y-auto flex justify-center items-center;
+    @apply h-screen w-screen fixed top-0 left-0 invisible z-[1401] overflow-x-hidden overflow-y-hidden flex justify-center items-center;
 
     &.is-visible {
         @apply visible;
@@ -144,11 +163,11 @@ const leaveAnimation = (el: Element, done: () => void) => {
     }
 
     &__content {
-        @apply relative  mx-auto w-full z-[1401] overflow-auto flex flex-col shadow-overlayer-content rounded-3xl bg-white;
-        width: v-bind(width);
-        @media screen and (max-width: 992px) {
-            width: v-bind(mobileWidth);
-        }
+        /* @apply relative  mx-auto z-[1401] overflow-auto flex flex-col shadow-overlayer-content bg-white; */
+        /* width: v-bind(width); */
+        /* @media screen and (max-width: 992px) { */
+        /* width: v-bind(mobileWidth); */
+        /* } */
     }
 
     &__header {
@@ -166,7 +185,7 @@ const leaveAnimation = (el: Element, done: () => void) => {
         }
     }
     &__footer {
-        @apply p-5;
+        @apply p-5 flex justify-between gap-3;
     }
 }
 </style>
