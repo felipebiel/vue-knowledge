@@ -1,5 +1,5 @@
 <template>
-    <div :class="{ dark: darkMode.isDarkMode }">
+    <div :class="{ dark: isDark }">
         <div class="side__box"><side-menu></side-menu></div>
         <div class="main__box" :class="activeClass">
             <toolbar-component></toolbar-component>
@@ -13,12 +13,12 @@
 <script setup lang="ts">
 import SideMenu from '@/layouts/side-menu/side-menu.vue';
 import ToolbarComponent from '@/layouts/toolbar/toolbar-component.vue';
-import { darkModeStore } from '@/stores/dark-mode';
 import { sideMenuStore } from '@/stores/side-menu';
+import { useDark } from '@vueuse/core';
 import { computed } from 'vue';
 
 const sideMenu = sideMenuStore();
-const darkMode = darkModeStore();
+const isDark = useDark({ selector: 'body' });
 
 const activeClass = computed(() => {
     return sideMenu.toggle ? 'main__box--active' : '';
