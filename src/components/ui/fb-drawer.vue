@@ -1,21 +1,21 @@
 <template>
     <Teleport to="body">
-        <div class="fb-modal" :class="{ 'is-open': isOpen, 'is-visible': isVisible }" @click="close">
-            <div :class="{ 'fb-modal__overlay': isOpen }" :style="{ transitionDuration: `${speed}s` }"></div>
+        <div class="fb-drawer" :class="{ 'is-open': isOpen, 'is-visible': isVisible }" @click="close">
+            <div :class="{ 'fb-drawer__overlay': isOpen }" :style="{ transitionDuration: `${speed}s` }"></div>
             <transition name="modal-inner" @enter="enterAnimation" @leave="leaveAnimation">
-                <div v-if="isOpen" class="fb-modal__content" :class="sizeComputed" :style="{ width: customSize ?? '' }" @click.stop>
-                    <div class="fb-modal__header" v-if="showHeader">
-                        <a class="fb-modal__close-modal" @click="close()">
+                <div v-if="isOpen" class="fb-drawer__content" :class="sizeComputed" :style="{ width: customSize ?? '' }" @click.stop>
+                    <div class="fb-drawer__header" v-if="showHeader">
+                        <a class="fb-drawer__close-modal" @click="close()">
                             <span class="material-icons-outlined"> close </span>
                         </a>
                         <slot name="header">Atenção</slot>
                     </div>
 
-                    <div class="fb-modal__body" :class="{ 'padding-body': paddingBody }">
+                    <div class="fb-drawer__body" :class="{ 'padding-body': paddingBody }">
                         <slot name="body"> default body </slot>
                     </div>
 
-                    <div class="fb-modal__footer" v-if="showFooter">
+                    <div class="fb-drawer__footer" v-if="showFooter">
                         <slot name="footer">
                             <fb-button variant="primary-outline" @click="close()">Cancelar</fb-button>
                             <fb-button @click="$emit('confirm')">Confirmar</fb-button>
@@ -57,14 +57,15 @@ const props = withDefaults(defineProps<ModalProps>(), {
 const emit = defineEmits(['close', 'confirm']);
 
 const classesSizes = {
-    xs: 'w-96',
-    sm: 'w-[512px]',
-    md: 'w-[672px]',
-    lg: 'w-[768px]',
-    full: 'w-full h-screen rounded-none',
+    xs: 'max-w-96',
+    sm: 'max-w-[512px]',
+    md: 'max-w-[672px]',
+    lg: 'max-w-[768px]',
+    full: 'max-w-full h-screen rounded-none',
 };
 
-const BASE_SIZE = 'fixed top-0 right-0 bottom-0 h-full w-full z-modal overflow-auto flex flex-col bg-white shadow-overlayer-content';
+const BASE_SIZE =
+    'fixed top-0 right-0 bottom-0 h-full w-full z-modal overflow-auto flex flex-col bg-white shadow-overlayer-content rounded-tl-3xl rounded-bl-3xl';
 
 const sizeComputed = computed(() => {
     return twMerge(BASE_SIZE, classesSizes[props.size]);
@@ -106,7 +107,7 @@ const leaveAnimation = (el: Element, done: () => void) => {
 </script>
 
 <style scoped lang="scss">
-.fb-modal {
+.fb-drawer {
     @apply h-screen w-screen fixed top-0 left-0 invisible z-[1401] overflow-x-hidden overflow-y-hidden flex justify-center items-center;
 
     &.is-visible {
@@ -114,7 +115,7 @@ const leaveAnimation = (el: Element, done: () => void) => {
     }
 
     &.is-open {
-        .fb-modal__overlay {
+        .fb-drawer__overlay {
             @apply fixed inset-0 w-full bg-black select-none opacity-40;
         }
     }
