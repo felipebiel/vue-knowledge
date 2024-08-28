@@ -10,3 +10,9 @@ export const getKeysAndValues = (obj: Record<string, number>): { keys: string[];
     const values = Object.values(obj);
     return { keys, values };
 };
+
+export const toggleBackgroundScrolling = (enable: boolean) => {
+    const body: HTMLBodyElement | null = document.querySelector('body');
+    const bodyStyle = body?.style;
+    if (bodyStyle) bodyStyle.overflow = enable ? 'hidden' : '';
+};
