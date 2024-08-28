@@ -38,7 +38,7 @@ const DISABLED_LOADING = 'opacity-80 bg-gray-500 hover:bg-gray-500 cursor-not-al
 
 const classesVariants = {
     primary: 'text-white bg-primary',
-    'primary-outline': 'text-primary bg-transparent shadow-[inset_0px_0px_1px_1px]',
+    'primary-outline': 'text-primary bg-transparent shadow-[inset_0px_0px_1px_1px] dark:text-zinc-100',
     'primary-link': 'text-primary bg-transparent underline',
     secundary: 'text-white bg-link',
     'secundary-link': 'text-link bg-transparent underline',

@@ -75,6 +75,54 @@
                 </template>
             </fb-table>
         </fb-card>
+
+        <fb-card>
+            <fb-title-bar class="mb-4">
+                <template v-slot:left>Modals</template>
+            </fb-title-bar>
+            <fb-title-bar class="mb-4" title-type="subtitle">
+                <template v-slot:left>Simples</template>
+            </fb-title-bar>
+
+            <fb-button @click="openModal('simple')">Abrir Modal</fb-button>
+            <fb-title-bar class="my-4" title-type="subtitle">
+                <template v-slot:left>Animações</template>
+            </fb-title-bar>
+            <div class="flex flex-wrap gap-2">
+                <fb-button @click="openModal('simple')">Scale</fb-button>
+                <fb-button @click="openModal('scale-long')">Scale speed 1.5s</fb-button>
+                <fb-button @click="openModal('fadeIn')">fadeIn</fb-button>
+                <fb-button @click="openModal('dropIn')">dropIn</fb-button>
+                <fb-button @click="openModal('flip')">flip</fb-button>
+                <fb-button @click="openModal('newspaper')">newspaper</fb-button>
+            </div>
+
+            <fb-title-bar class="my-4" title-type="subtitle">
+                <template v-slot:left>Tamanhos</template>
+            </fb-title-bar>
+            <div class="flex flex-wrap gap-2">
+                <fb-button @click="openModal('size-xs')">xs</fb-button>
+                <fb-button @click="openModal('size-sm')">sm</fb-button>
+                <fb-button @click="openModal('size-md')">md</fb-button>
+                <fb-button @click="openModal('size-lg')">lg</fb-button>
+                <fb-button @click="openModal('size-full')">full</fb-button>
+                <fb-button @click="openModal('size-custom')">Custom 900px</fb-button>
+            </div>
+
+            <fb-modal
+                :size="modalExamples[self.modalSelected].size"
+                :speed="modalExamples[self.modalSelected].speed"
+                :animation="modalExamples[self.modalSelected].animation"
+                :customSize="modalExamples[self.modalSelected].customSize"
+                :isOpen="self.showModal"
+                @close="self.showModal = false"
+            >
+                <template v-slot:header>Todos os registros</template>
+                <template v-slot:body>
+                    <fb-table :items="self.tableData" :headers="self.headersTable"></fb-table>
+                </template>
+            </fb-modal>
+        </fb-card>
     </div>
 </template>
 
@@ -82,8 +130,11 @@
 import FbTitleBar from '@/components/ui/fb-title-bar.vue';
 import FbButton from '@/components/ui/fb-button.vue';
 import FbTable from '@/components/ui/fb-table.vue';
-import { reactive } from 'vue';
 import FbCard from '@/components/ui/fb-card.vue';
+import FbModal from '@/components/ui/fb-modal.vue';
+
+import { reactive } from 'vue';
+import { animationsModal, sizes } from '@/theme/constantes-theme';
 
 const self = reactive({
     headersTable: [
@@ -106,7 +157,36 @@ const self = reactive({
         Cancelado: 'bg-red-500',
         Estornado: 'bg-zinc-500',
     },
+    showModal: false,
+    modalSelected: 'simple',
 });
+
+const modalExamples: {
+    [key: string]: {
+        speed: number;
+        animation: (typeof animationsModal)[number];
+        size: (typeof sizes)[number] | 'full';
+        customSize?: string;
+    };
+} = {
+    simple: { speed: 0.5, animation: 'scale', size: 'md' },
+    'scale-long': { speed: 1.5, animation: 'scale', size: 'md' },
+    fadeIn: { speed: 0.5, animation: 'fadeIn', size: 'md' },
+    dropIn: { speed: 0.5, animation: 'dropIn', size: 'md' },
+    flip: { speed: 0.5, animation: 'flip', size: 'md' },
+    newspaper: { speed: 0.5, animation: 'newspaper', size: 'md' },
+    'size-xs': { speed: 0.5, animation: 'scale', size: 'xs' },
+    'size-sm': { speed: 0.5, animation: 'scale', size: 'sm' },
+    'size-md': { speed: 0.5, animation: 'scale', size: 'md' },
+    'size-lg': { speed: 0.5, animation: 'scale', size: 'lg' },
+    'size-full': { speed: 0.5, animation: 'scale', size: 'full' },
+    'size-custom': { speed: 0.5, animation: 'scale', size: 'md', customSize: '900px' },
+};
+
+const openModal = (modalSelected: string) => {
+    self.modalSelected = modalSelected;
+    self.showModal = true;
+};
 </script>
 
 <style scoped></style>
