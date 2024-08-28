@@ -34,6 +34,7 @@ import gsap from 'gsap';
 import { animationsDrawer, sizes } from '@/theme/constantes-theme';
 import { twMerge } from 'tailwind-merge';
 import { gsapAnimations } from '@/theme/gsap-animations';
+import { toggleBackgroundScrolling } from '@/utils';
 
 export interface ModalProps {
     isOpen: boolean;
@@ -81,8 +82,10 @@ watch(
     () => props.isOpen,
     (val) => {
         if (val) {
+            toggleBackgroundScrolling(true);
             isVisible.value = true;
         } else {
+            toggleBackgroundScrolling(false);
             setTimeout(() => (isVisible.value = false), props.speed * 1000);
         }
     },
