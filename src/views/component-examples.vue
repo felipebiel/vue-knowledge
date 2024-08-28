@@ -123,6 +123,54 @@
                 </template>
             </fb-modal>
         </fb-card>
+
+        <fb-card>
+            <fb-title-bar class="mb-4">
+                <template v-slot:left>Drawer</template>
+            </fb-title-bar>
+            <fb-title-bar class="mb-4" title-type="subtitle">
+                <template v-slot:left>Simples</template>
+            </fb-title-bar>
+
+            <fb-button @click="openDrawer('simple')">Abrir Drawer</fb-button>
+
+            <fb-title-bar class="my-4" title-type="subtitle">
+                <template v-slot:left>Tamanhos</template>
+            </fb-title-bar>
+            <div class="flex flex-wrap gap-2">
+                <fb-button @click="openDrawer('size-xs')">xs</fb-button>
+                <fb-button @click="openDrawer('size-sm')">sm</fb-button>
+                <fb-button @click="openDrawer('size-md')">md</fb-button>
+                <fb-button @click="openDrawer('size-lg')">lg</fb-button>
+                <fb-button @click="openDrawer('size-full')">full</fb-button>
+                <fb-button @click="openDrawer('size-custom')">Custom 900px</fb-button>
+            </div>
+
+            <fb-title-bar class="my-4" title-type="subtitle">
+                <template v-slot:left>Posição da abertura</template>
+            </fb-title-bar>
+            <div class="flex flex-wrap gap-2">
+                <fb-button @click="openDrawer('simple')">Direita</fb-button>
+                <fb-button @click="openDrawer('position-left')">Esquerda</fb-button>
+            </div>
+
+            <fb-drawer
+                :size="drawerExamples[self.drawerSelected].size"
+                :speed="drawerExamples[self.drawerSelected].speed"
+                :position="drawerExamples[self.drawerSelected].position"
+                :customSize="drawerExamples[self.drawerSelected].customSize"
+                :isOpen="self.showDrawer"
+                @close="self.showDrawer = false"
+            >
+                <template v-slot:header>Todos os registros</template>
+                <template v-slot:body>
+                    <div v-for="item in 10" :key="item">
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint, sapiente! Magnam, voluptate beatae? Fugiat adipisci,
+                        rem dolorum possimus veniam deserunt id dolores nisi ducimus unde eligendi voluptate a accusamus sapiente?
+                    </div>
+                </template>
+            </fb-drawer>
+        </fb-card>
     </div>
 </template>
 
@@ -132,9 +180,10 @@ import FbButton from '@/components/ui/fb-button.vue';
 import FbTable from '@/components/ui/fb-table.vue';
 import FbCard from '@/components/ui/fb-card.vue';
 import FbModal from '@/components/ui/fb-modal.vue';
+import FbDrawer from '@/components/ui/fb-drawer.vue';
 
 import { reactive } from 'vue';
-import { animationsModal, sizes } from '@/theme/constantes-theme';
+import { animationsModal, positionDrawer, sizes } from '@/theme/constantes-theme';
 
 const self = reactive({
     headersTable: [
@@ -158,7 +207,9 @@ const self = reactive({
         Estornado: 'bg-zinc-500',
     },
     showModal: false,
+    showDrawer: false,
     modalSelected: 'simple',
+    drawerSelected: 'simple',
 });
 
 const modalExamples: {
@@ -186,6 +237,29 @@ const modalExamples: {
 const openModal = (modalSelected: string) => {
     self.modalSelected = modalSelected;
     self.showModal = true;
+};
+
+const drawerExamples: {
+    [key: string]: {
+        speed: number;
+        position: (typeof positionDrawer)[number];
+        size: (typeof sizes)[number] | 'full';
+        customSize?: string;
+    };
+} = {
+    simple: { speed: 0.5, position: 'right', size: 'md' },
+    'size-xs': { speed: 0.5, position: 'right', size: 'xs' },
+    'size-sm': { speed: 0.5, position: 'right', size: 'sm' },
+    'size-md': { speed: 0.5, position: 'right', size: 'md' },
+    'size-lg': { speed: 0.5, position: 'right', size: 'lg' },
+    'size-full': { speed: 0.5, position: 'right', size: 'full' },
+    'size-custom': { speed: 0.5, position: 'right', size: 'md', customSize: '900px' },
+    'position-left': { speed: 0.5, position: 'left', size: 'md' },
+};
+
+const openDrawer = (drawerSelected: string) => {
+    self.drawerSelected = drawerSelected;
+    self.showDrawer = true;
 };
 </script>
 
