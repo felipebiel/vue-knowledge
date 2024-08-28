@@ -75,7 +75,7 @@ const animationPositions: { [key: string]: (typeof animationsDrawer)[number] } =
     left: 'tranlateLeft',
 };
 
-const BASE_SIZE = 'fixed h-full w-full z-modal overflow-auto flex flex-col bg-white shadow-overlayer-content ';
+const BASE_SIZE = 'fixed h-full w-full z-modal overflow-auto flex flex-col bg-white shadow-overlayer-content dark:bg-zinc-600';
 
 const classesComputed = computed(() => {
     return twMerge(BASE_SIZE, classesPositions[props.position], classesSizes[props.size]);
