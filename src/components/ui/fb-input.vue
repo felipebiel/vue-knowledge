@@ -1,10 +1,8 @@
 <template>
     <div class="fb-input" :class="{ 'padding-bottom-input': !noPadding }">
-        <div v-if="label.trim().length" class="label-input flex items-center justify-between mb-1">
-            <p class="font-semibold text-grayscale-500 flex items-center">
-                {{ label }}
-            </p>
-        </div>
+        <label v-if="label.trim().length" class="fb-input__label">
+            {{ label }}
+        </label>
         <!-- <div class="input-component" :style="!!slots['left-item'] ? 'position: relative; z-index: 20 !important' : ''"> -->
         <div class="input-component">
             <div class="relative flex">
@@ -184,13 +182,19 @@ const model = defineModel({
 <style scoped lang="scss">
 .fb-input {
     @apply relative;
+    &__label {
+        @apply font-semibold text-zinc-500 dark:text-zinc-100 flex mb-1;
+    }
 
     &.padding-bottom-input {
         @apply pb-8;
     }
+    .input-component {
+    }
 
     input {
-        @apply w-full;
+        @apply w-full focus:border-primary dark:focus:border-zinc-400 focus:ring-1 text-zinc-950;
+        @apply focus:outline-none px-4 h-12 border border-zinc-200 rounded-xl;
         text-align: v-bind(textAlignInput);
 
         &:disabled {
