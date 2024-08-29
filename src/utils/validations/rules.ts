@@ -2,6 +2,7 @@ export interface RulesInterface {
     type: 'email' | 'text';
     name: string;
     required: boolean;
+    valid: boolean;
     customMessageRequired?: string;
     customMessageMinLength?: string;
     customMessageMaxLength?: string;
@@ -10,6 +11,10 @@ export interface RulesInterface {
     maxLength?: number;
 }
 
+export const isValidRules = (validationsRules: { [key: string]: RulesInterface }): boolean => {
+    return Object.values(validationsRules).reduce((isValid, rule) => isValid && rule.valid, true);
+};
+
 export const validateInput = (rule: RulesInterface | undefined | null, value: string | number) => {
     if (!rule) return '';
     switch (rule.type) {
@@ -17,9 +22,10 @@ export const validateInput = (rule: RulesInterface | undefined | null, value: st
             return emailValidate(rule, value);
         case 'text':
             return textValidate(rule, value);
+        default:
+            return '';
     }
-
-    return '';
+    // ... Others function to validation Date, number, etc...
 };
 
 export const textValidate = (rule: RulesInterface, value: string | number): string => {
