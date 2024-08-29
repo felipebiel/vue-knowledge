@@ -58,7 +58,9 @@
             </fb-title-bar>
 
             <fb-table :items="self.tableData" :headers="self.headersTable">
-                <template v-slot:header-price> <p class="font-bold text-red-800">Troquei o preço</p> </template>
+                <template v-slot:header-price>
+                    <p class="font-bold text-red-800">Troquei o preço</p>
+                </template>
                 <template v-slot:price="{ item }"> R$ {{ item.price }} </template>
                 <template v-slot:payment="{ item }">
                     <p class="font-bold text-primary">{{ item.payment }}</p>
@@ -171,6 +173,16 @@
                 </template>
             </fb-drawer>
         </fb-card>
+        <fb-card>
+            <fb-title-bar class="mb-4">
+                <template v-slot:left>Inputs</template>
+            </fb-title-bar>
+            <fb-title-bar class="mb-4" title-type="subtitle">
+                <template v-slot:left>Simples</template>
+            </fb-title-bar>
+            {{ testeBind }}
+            <fb-input idInput="my-input" nameInput="my-input" v-model="testeBind"></fb-input>
+        </fb-card>
     </div>
 </template>
 
@@ -181,8 +193,9 @@ import FbTable from '@/components/ui/fb-table.vue';
 import FbCard from '@/components/ui/fb-card.vue';
 import FbModal from '@/components/ui/fb-modal.vue';
 import FbDrawer from '@/components/ui/fb-drawer.vue';
+import FbInput from '@/components/ui/fb-input.vue';
+import { reactive, ref } from 'vue';
 
-import { reactive } from 'vue';
 import { animationsModal, positionDrawer, sizes } from '@/theme/constantes-theme';
 
 const self = reactive({
@@ -261,6 +274,8 @@ const openDrawer = (drawerSelected: string) => {
     self.drawerSelected = drawerSelected;
     self.showDrawer = true;
 };
+
+const testeBind = ref<string>('');
 </script>
 
 <style scoped></style>
