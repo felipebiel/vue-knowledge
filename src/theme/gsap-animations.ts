@@ -29,6 +29,11 @@ export const gsapAnimations: DictAnimation = {
         enter: { scale: 1, rotateX: '0deg', opacity: 1 },
         leave: { scale: 0, rotateX: '-360deg', opacity: 0 },
     },
+    newspaper: {
+        initial: { scale: 0, rotate: '720deg', opacity: 0 },
+        enter: { scale: 1, rotate: '0deg', opacity: 1 },
+        leave: { scale: 0, rotate: '-720deg', opacity: 0 },
+    },
     tranlateRight: {
         initial: { translateX: '100%' },
         enter: { translateX: '0', opacity: 1 },
