@@ -1,18 +1,15 @@
 <template>
     <div class="fb-input" :class="{ 'padding-bottom-input': !noPadding }">
-        <label v-if="label.trim().length" class="fb-input__label" :for="idInput">
-            {{ label }}
-        </label>
-        <!-- <div class="input-component" :style="!!slots['left-item'] ? 'position: relative; z-index: 20 !important' : ''"> -->
+        <div className="flex justify-between">
+            <label v-if="label.trim().length" class="fb-input__label" :for="idInput">
+                {{ label }}
+            </label>
+            <transition name="custom-classes-transition" @enter="enterAnimationError" @leave="leaveAnimationError">
+                <p class="fb-input__error-message" v-if="showError"><span class="material-icons"> info </span> {{ messageError }}</p>
+            </transition>
+        </div>
+
         <div class="fb-input__group">
-            <!-- <div v-if="leftIconName" class="flex items-center justify-center absolute w-12 h-12 z-[2] left-0 top-0">
-                    <BfIcon class="left-icon" :name="leftIconName" :color="leftIconColor" :size="sizeIcon" />
-                </div>
-
-                <div class="w-32" v-if="!!slots['left-item']">
-                    <slot v-if="!!slots['left-item']" name="left-item"></slot>
-                </div> -->
-
             <div class="self-stretch">
                 <slot name="leftAddon"></slot>
             </div>
@@ -66,34 +63,14 @@
                     </div>
                 </template> -->
         </div>
-        <!-- <transition
-            name="custom-classes-transition"
-            enter-active-class="animate__animated animate__faster animate__fadeIn"
-            leave-active-class="animate__animated animate__faster animate__fadeOut"
-        >
-            <BfText
-                variant="p3"
-                class="pl-4 font-normal mt-1 absolute text-status-red-900"
-                :class="[noPadding ? 'mb-1' : 'mb-0']"
-                v-if="showError"
-            >
-                {{ messageError }}
-            </BfText>
-            <BfText
-                variant="p3"
-                class="pl-4 font-normal mt-1 absolute"
-                :class="[isDisabled ? 'text-grayscale-500' : 'text-grayscale-400']"
-                v-if="showHelperText"
-                position="absolute"
-            >
-                {{ helperText }}
-            </BfText>
-        </transition> -->
     </div>
 </template>
 
 <script setup lang="ts">
-import { InputTypeHTMLAttribute } from 'vue';
+import { gsapAnimations } from '@/theme/gsap-animations';
+import gsap from 'gsap';
+import { RulesInterface, validateInput } from '@/utils/validations/rules';
+import { InputTypeHTMLAttribute, ref } from 'vue';
 
 export interface inputProps {
     label?: string;
@@ -108,7 +85,7 @@ export interface inputProps {
     valid?: boolean;
     validOnlyTouch?: boolean;
     showRequiredError?: boolean;
-    rules?: object;
+    rules?: RulesInterface | null;
     fieldType?: InputTypeHTMLAttribute;
     noPadding?: boolean;
     textAlignInput?: 'left' | 'center' | 'right';
@@ -162,32 +139,52 @@ const props = withDefaults(defineProps<inputProps>(), {
     valid: false,
     validOnlyTouch: false,
     showRequiredError: false,
-    // rules: {},
     fieldType: 'text',
     noPadding: false,
     textAlignInput: 'left',
     showCleanField: false,
     showVisibility: false,
 });
-const emit = defineEmits(['input', 'update:modelValue', 'enter', 'onblur']);
-
-// const model = defineModel('modelValue', {
-//     set(modelValue) {
-//         emit('input', modelValue);
-//     },
-//     get() {
-//         return props.modelValue;
-//     },
-// });
+const emit = defineEmits(['input', 'update:modelValue', 'enter', 'onblur', 'valid']);
 
 const model = defineModel({
-    set(modelValue) {
+    set(modelValue: string) {
+        validate(modelValue);
         return modelValue;
     },
     get() {
         return props.modelValue;
     },
 });
+
+// validation erros
+const showError = ref<boolean>(false);
+const messageError = ref<string>('');
+
+const validate = (modelValue: string | number) => {
+    if (!props.rules && !props.modelValue) return false;
+
+    messageError.value = validateInput(props.rules, modelValue);
+    if (messageError.value.trim().split('').length) {
+        showError.value = true;
+    } else {
+        showError.value = false;
+    }
+    emit('valid', !showError.value);
+};
+
+const timeline = gsap.timeline();
+const enterAnimationError = (el: Element, done: () => void) => {
+    timeline.fromTo(el, gsapAnimations['fadeIn'].initial, {
+        ...gsapAnimations['fadeIn'].enter,
+        duration: 0.5,
+        onComplete: done,
+    });
+};
+
+const leaveAnimationError = (el: Element, done: () => void) => {
+    timeline.to(el, { ...gsapAnimations['fadeIn'].leave, duration: 0.5, onComplete: done });
+};
 </script>
 
 <style scoped lang="scss">
@@ -214,6 +211,9 @@ const model = defineModel({
                 @apply bg-zinc-50 text-zinc-600;
             }
         }
+    }
+    &__error-message {
+        @apply flex items-center gap-1 px-2 font-semibold text-red-500 bg-red-100 rounded-md mb-1;
     }
 }
 </style>
