@@ -22,6 +22,7 @@
                 :id="idInput"
                 :placeholder="placeholderText"
                 :disabled="isDisabled"
+                :readonly="isReadOnly"
                 :type="fieldType"
                 v-model="model"
                 v-on:keyup.enter="$emit('enter', true)"
@@ -207,7 +208,10 @@ const model = defineModel({
             text-align: v-bind(textAlignInput);
 
             &:disabled {
-                // @apply bg-neutral-0;
+                @apply bg-zinc-100 text-zinc-400;
+            }
+            &:read-only {
+                @apply bg-zinc-50 text-zinc-600;
             }
         }
     }
