@@ -1,12 +1,11 @@
 <template>
     <div class="fb-input" :class="{ 'padding-bottom-input': !noPadding }">
-        <label v-if="label.trim().length" class="fb-input__label">
+        <label v-if="label.trim().length" class="fb-input__label" :for="idInput">
             {{ label }}
         </label>
         <!-- <div class="input-component" :style="!!slots['left-item'] ? 'position: relative; z-index: 20 !important' : ''"> -->
-        <div class="input-component">
-            <div class="relative flex">
-                <!-- <div v-if="leftIconName" class="flex items-center justify-center absolute w-12 h-12 z-[2] left-0 top-0">
+        <div class="fb-input__group">
+            <!-- <div v-if="leftIconName" class="flex items-center justify-center absolute w-12 h-12 z-[2] left-0 top-0">
                     <BfIcon class="left-icon" :name="leftIconName" :color="leftIconColor" :size="sizeIcon" />
                 </div>
 
@@ -14,22 +13,32 @@
                     <slot v-if="!!slots['left-item']" name="left-item"></slot>
                 </div> -->
 
-                <input
-                    :id="idInput"
-                    :placeholder="placeholderText"
-                    :disabled="isDisabled"
-                    :type="fieldType"
-                    v-model="model"
-                    v-on:keyup.enter="$emit('enter', true)"
-                    @blur="$emit('onblur')"
-                />
+            <div class="self-stretch">
+                <slot name="leftAddon"></slot>
+            </div>
+            <div class="h-full flex items-center px-5 bg-zinc-100" v-if="!$slots.leftAddon && leftAddonText">{{ leftAddonText }}</div>
 
-                <!-- <template v-if="isLoading">
+            <input
+                :id="idInput"
+                :placeholder="placeholderText"
+                :disabled="isDisabled"
+                :type="fieldType"
+                v-model="model"
+                v-on:keyup.enter="$emit('enter', true)"
+                @blur="$emit('onblur')"
+            />
+
+            <div class="self-stretch">
+                <slot name="rightAddon"></slot>
+            </div>
+            <div class="h-full flex items-center px-5 bg-zinc-100" v-if="!$slots.rightAddon && rightAddonText">{{ rightAddonText }}</div>
+
+            <!-- <template v-if="isLoading">
                     <div class="flex items-center justify-center absolute w-12 h-12 z-[2] right-0 top-0 transition duration-300">
                         <BfSpinner class="loading-icon" size="md" /> 
                     </div>
                 </template> -->
-                <!-- <template v-else>
+            <!-- <template v-else>
                     <div
                         v-if="rightIconName && !showVisibility"
                         class="flex items-center justify-center absolute w-12 h-12 z-[2] right-0 top-0"
@@ -55,7 +64,6 @@
                         </span>
                     </div>
                 </template> -->
-            </div>
         </div>
         <!-- <transition
             name="custom-classes-transition"
@@ -89,6 +97,8 @@ import { InputTypeHTMLAttribute } from 'vue';
 export interface inputProps {
     label?: string;
     placeholderText?: string;
+    leftAddonText?: string;
+    rightAddonText?: string;
     isDisabled?: boolean;
     isReadOnly?: boolean;
     isLoading?: boolean;
@@ -182,23 +192,23 @@ const model = defineModel({
 <style scoped lang="scss">
 .fb-input {
     @apply relative;
-    &__label {
-        @apply font-semibold text-zinc-500 dark:text-zinc-100 flex mb-1;
-    }
-
     &.padding-bottom-input {
         @apply pb-8;
     }
-    .input-component {
+    &__label {
+        @apply font-semibold text-zinc-500 dark:text-zinc-100 flex mb-1;
     }
+    &__group {
+        @apply flex items-center relative w-full h-12 border rounded-xl border-zinc-200 text-zinc-950 overflow-hidden;
+        /* @apply focus:border-primary dark:focus:border-zinc-400 focus:ring-1; */
 
-    input {
-        @apply w-full focus:border-primary dark:focus:border-zinc-400 focus:ring-1 text-zinc-950;
-        @apply focus:outline-none px-4 h-12 border border-zinc-200 rounded-xl;
-        text-align: v-bind(textAlignInput);
+        input {
+            @apply px-5 font-medium h-12 outline-none flex-1;
+            text-align: v-bind(textAlignInput);
 
-        &:disabled {
-            // @apply bg-neutral-0;
+            &:disabled {
+                // @apply bg-neutral-0;
+            }
         }
     }
 }
