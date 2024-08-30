@@ -9,7 +9,7 @@
             </transition>
         </div>
 
-        <div class="fb-input__group">
+        <div class="fb-input__group" :class="{ 'border-red-400 ring-2 ring-red-400': showError }">
             <div class="self-stretch">
                 <slot name="leftAddon"></slot>
             </div>
@@ -197,8 +197,7 @@ const leaveAnimationError = (el: Element, done: () => void) => {
         @apply font-semibold text-zinc-500 dark:text-zinc-100 flex mb-1;
     }
     &__group {
-        @apply flex items-center relative w-full h-12 border rounded-xl border-zinc-200 text-zinc-950 overflow-hidden;
-        /* @apply focus:border-primary dark:focus:border-zinc-400 focus:ring-1; */
+        @apply flex items-center relative w-full h-12 border rounded-xl border-zinc-200 text-zinc-950 overflow-hidden duration-150;
 
         input {
             @apply px-5 font-medium h-12 outline-none flex-1;
