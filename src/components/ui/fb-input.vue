@@ -58,16 +58,12 @@ export interface inputProps {
     modelValue?: string | number;
     maxLength?: boolean | number;
     valid?: boolean;
-    validOnlyTouch?: boolean;
-    showRequiredError?: boolean;
     rules?: RulesInterface | null;
     fieldType?: InputTypeHTMLAttribute;
     noPadding?: boolean;
     textAlignInput?: 'left' | 'center' | 'right';
     idInput: string;
     nameInput: string;
-    showCleanField?: boolean;
-    showVisibility?: boolean;
     calendar?: boolean;
     rangeDate?: boolean;
     configCalendar?: FlatpickrOptions;
@@ -100,7 +96,7 @@ const props = withDefaults(defineProps<inputProps>(), {
         };
     },
 });
-const emit = defineEmits(['input', 'update:modelValue', 'enter', 'onblur', 'valid']);
+const emit = defineEmits(['input', 'enter', 'onblur', 'valid']);
 
 const model = defineModel({
     set(modelValue: string) {
@@ -172,7 +168,7 @@ const isReadOnlyLocal = computed(() => {
         @apply font-semibold text-zinc-500 dark:text-zinc-100 flex mb-1;
     }
     &__group {
-        @apply flex items-center relative w-full h-12 border rounded-xl border-zinc-200 text-zinc-950 overflow-hidden duration-150;
+        @apply flex items-center relative w-full h-12 border rounded-xl border-zinc-200 text-zinc-950 overflow-hidden duration-150 bg-white;
 
         input {
             @apply px-5 font-medium h-12 outline-none flex-1;

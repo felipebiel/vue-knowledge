@@ -180,8 +180,136 @@
             <fb-title-bar class="mb-4" title-type="subtitle">
                 <template v-slot:left>Simples</template>
             </fb-title-bar>
-            {{ testeBind }}
-            <fb-input idInput="my-input" nameInput="my-input" v-model="testeBind"></fb-input>
+
+            <fb-input idInput="my-input" nameInput="my-input" v-model="testeBind" />
+            <p>Bind: {{ testeBind }}</p>
+            <fb-title-bar class="my-4" title-type="subtitle">
+                <template v-slot:left>Label e Placeholder</template>
+            </fb-title-bar>
+            <fb-input label="My Input" placeholder-text="My placeholder" idInput="my-input-2" nameInput="my-input-2" v-model="testeBind" />
+
+            <fb-title-bar class="my-4" title-type="subtitle">
+                <template v-slot:left>Left e Right Addons</template>
+            </fb-title-bar>
+            <fb-input
+                label="My Input"
+                placeholder-text="My placeholder"
+                left-addon-text="https://"
+                right-addon-text=".com"
+                idInput="my-input-3"
+                nameInput="my-input-3"
+                v-model="testeBind"
+            />
+
+            <fb-title-bar class="my-4" title-type="subtitle">
+                <template v-slot:left>Left e Right slots</template>
+            </fb-title-bar>
+            <fb-input
+                label="My Input"
+                placeholder-text="My placeholder"
+                left-addon-text="https://"
+                right-addon-text=".com"
+                idInput="my-input-4"
+                nameInput="my-input-4"
+                v-model="testeBind"
+            >
+                <template #leftAddon> <div class="h-full flex items-center px-5 bg-red-200">Customizado</div> </template>
+                <template #rightAddon><div class="h-full flex items-center px-5 bg-green-200">Customizado</div></template>
+            </fb-input>
+            <fb-input
+                label="My Input"
+                placeholder-text="My placeholder"
+                left-addon-text="https://"
+                right-addon-text=".com"
+                idInput="my-input-5"
+                nameInput="my-input-5"
+                v-model="testeBind"
+            >
+                <template #leftAddon>
+                    <div class="h-full flex items-center pl-3"><span class="material-icons text-primary"> search </span></div>
+                </template>
+                <template #rightAddon
+                    ><div class="h-full flex items-center pr-3">
+                        <span class="material-icons text-green-800"> verified </span>
+                    </div></template
+                >
+            </fb-input>
+
+            <fb-title-bar class="my-4" title-type="subtitle">
+                <template v-slot:left>Desabilitado</template>
+            </fb-title-bar>
+            <fb-input
+                label="My Input"
+                placeholder-text="My placeholder"
+                is-disabled
+                idInput="my-input-6"
+                nameInput="my-input-6"
+                v-model="testeBind"
+            />
+
+            <fb-title-bar class="my-4" title-type="subtitle">
+                <template v-slot:left>Apenas Leitura</template>
+            </fb-title-bar>
+            <fb-input
+                label="My Input"
+                placeholder-text="My placeholder"
+                v-model="readOnlyBind"
+                is-read-only
+                idInput="my-input-7"
+                nameInput="my-input-7"
+            />
+
+            <fb-title-bar class="my-4" title-type="subtitle">
+                <template v-slot:left>Validações</template>
+            </fb-title-bar>
+
+            <fb-input
+                label="My Input"
+                placeholder-text="My placeholder"
+                v-model="form.text"
+                idInput="my-input-8"
+                nameInput="my-input-8"
+                :rules="validationsRules['text']"
+                @valid="
+                    validationsRules['text'].valid = $event;
+                    checkDisabledButton();
+                "
+            />
+
+            <fb-input
+                label="My Input"
+                placeholder-text="Just valid email"
+                v-model="form.email"
+                idInput="my-input-9"
+                nameInput="my-input-9"
+                :rules="validationsRules['email']"
+                @valid="
+                    validationsRules['email'].valid = $event;
+                    checkDisabledButton();
+                "
+            />
+            <p class="px-2" :class="{ 'bg-green-300': isFormValid, 'bg-red-300': !isFormValid }">
+                {{ isFormValid ? 'Formulário válido' : 'Formulário inválido' }}
+            </p>
+
+            <fb-input
+                label="Date Picker"
+                placeholder-text="My placeholder"
+                idInput="my-input-10"
+                nameInput="my-input-10"
+                calendar
+                v-model="dateBind"
+            />
+
+            <fb-input
+                label="Range Date Picker"
+                placeholder-text="My placeholder"
+                idInput="my-input-11"
+                nameInput="my-input-11"
+                calendar
+                range-date
+                v-model="rangeDateBind"
+            />
         </fb-card>
     </div>
 </template>
@@ -197,6 +325,8 @@ import FbInput from '@/components/ui/fb-input.vue';
 import { reactive, ref } from 'vue';
 
 import { animationsModal, positionDrawer, sizes } from '@/theme/constantes-theme';
+import { RulesInterface } from '@/utils/validations/rules';
+import { isValidRules } from '@/utils/validations/rules';
 
 const self = reactive({
     headersTable: [
@@ -276,6 +406,38 @@ const openDrawer = (drawerSelected: string) => {
 };
 
 const testeBind = ref<string>('');
+const dateBind = ref<string>('');
+const rangeDateBind = ref<string>('');
+
+const readOnlyBind = ref<string>('Apenas leitura');
+const form = reactive({ text: '', email: '' });
+const isFormValid = ref<boolean>(false);
+const validationsRules = reactive<{ [key: string]: RulesInterface }>({
+    text: {
+        required: true,
+        valid: false,
+        name: 'text',
+        type: 'text',
+        customMessageRequired: 'Obrigatório',
+        minLength: 3,
+        maxLength: 5,
+    },
+    email: {
+        required: true,
+        valid: false,
+        name: 'email',
+        type: 'email',
+    },
+});
+
+const validateForm = async (): Promise<boolean> => {
+    return isValidRules(validationsRules);
+};
+
+const checkDisabledButton = async () => {
+    const disabledButton = await validateForm();
+    isFormValid.value = disabledButton;
+};
 </script>
 
 <style scoped></style>
