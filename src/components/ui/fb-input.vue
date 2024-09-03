@@ -19,8 +19,9 @@
                 :id="idInput"
                 :placeholder="placeholderText"
                 :disabled="isDisabled"
-                :readonly="isReadOnly"
+                :readonly="isReadOnlyLocal"
                 :type="fieldType"
+                ref="inputRef"
                 v-model="model"
                 v-on:keyup.enter="$emit('enter', true)"
                 @blur="$emit('onblur')"
@@ -30,38 +31,6 @@
                 <slot name="rightAddon"></slot>
             </div>
             <div class="h-full flex items-center px-5 bg-zinc-100" v-if="!$slots.rightAddon && rightAddonText">{{ rightAddonText }}</div>
-
-            <!-- <template v-if="isLoading">
-                    <div class="flex items-center justify-center absolute w-12 h-12 z-[2] right-0 top-0 transition duration-300">
-                        <BfSpinner class="loading-icon" size="md" /> 
-                    </div>
-                </template> -->
-            <!-- <template v-else>
-                    <div
-                        v-if="rightIconName && !showVisibility"
-                        class="flex items-center justify-center absolute w-12 h-12 z-[2] right-0 top-0"
-                    >
-                        <BfIcon class="right-icon" :name="rightIconName" :color="rightIconColor" :size="sizeIcon" />
-                    </div>
-
-                    <div v-if="showVisibility" class="flex items-center justify-center absolute w-12 h-12 z-[2] right-0 top-0">
-                        <span @click="switchVisibility()">
-                            <BfIcon class="left-icon cursor-pointer" :name="iconVisibility" :color="leftIconColor" :size="sizeIcon" />
-                        </span>
-                    </div>
-                    <div
-                        v-if="(showCleanField && value.length) || ((calendar || rangeDate) && value && value.length)"
-                        class="flex items-center justify-center absolute w-12 h-12 z-[2] right-0 top-0"
-                    >
-                        <span @click="cleanInput">
-                            <BfIcon
-                                class="right-icon text-neutral-20 hover:text-neutral-40 cursor-pointer"
-                                name="bf-close"
-                                :size="sizeIcon"
-                            />
-                        </span>
-                    </div>
-                </template> -->
         </div>
     </div>
 </template>
@@ -71,6 +40,12 @@ import { gsapAnimations } from '@/theme/gsap-animations';
 import gsap from 'gsap';
 import { RulesInterface, validateInput } from '@/utils/validations/rules';
 import { InputTypeHTMLAttribute, ref } from 'vue';
+import { Portuguese } from 'flatpickr/dist/l10n/pt.js';
+import flatpickr from 'flatpickr';
+import { cloneDeep } from 'lodash';
+import { Options as FlatpickrOptions } from 'flatpickr/dist/types/options';
+import { Instance as FlatpickrInstance } from 'flatpickr/dist/types/instance';
+import { onMounted, computed } from 'vue';
 
 export interface inputProps {
     label?: string;
@@ -93,41 +68,9 @@ export interface inputProps {
     nameInput: string;
     showCleanField?: boolean;
     showVisibility?: boolean;
-    // calendar: {
-    //     type: Boolean,
-    //     default: false,
-    // },
-    // rangeDate: {
-    //     type: Boolean,
-    //     default: false,
-    // },
-    // minDate: {
-    //     type: String,
-    //     default: '',
-    // },
-    // maxDate: {
-    //     type: String,
-    //     default: '',
-    // },
-    // configCalendar: {
-    //     type: Object,
-    //     default: () => {
-    //         return {
-    //             monthSelectorType: 'dropdown',
-    //             allowInput: true,
-    //             altFormat: 'd/m/Y',
-    //             dateFormat: 'd/m/Y',
-    //             locale: { ...Portuguese, rangeSeparator: ' a ' },
-    //             mode: 'single',
-    //             minDate: '',
-    //             maxDate: '',
-    //         };
-    //     },
-    // },
-    // revalidate: {
-    //     type: Boolean;
-    //     default: false;
-    // };
+    calendar?: boolean;
+    rangeDate?: boolean;
+    configCalendar?: FlatpickrOptions;
 }
 
 const props = withDefaults(defineProps<inputProps>(), {
@@ -144,6 +87,18 @@ const props = withDefaults(defineProps<inputProps>(), {
     textAlignInput: 'left',
     showCleanField: false,
     showVisibility: false,
+    calendar: false,
+    rangeDate: false,
+    configCalendar: () => {
+        return {
+            monthSelectorType: 'dropdown',
+            allowInput: true,
+            altFormat: 'd/m/Y',
+            dateFormat: 'd/m/Y',
+            locale: { ...Portuguese, rangeSeparator: ' a ' },
+            mode: 'single',
+        };
+    },
 });
 const emit = defineEmits(['input', 'update:modelValue', 'enter', 'onblur', 'valid']);
 
@@ -185,6 +140,26 @@ const enterAnimationError = (el: Element, done: () => void) => {
 const leaveAnimationError = (el: Element, done: () => void) => {
     timeline.to(el, { ...gsapAnimations['fadeIn'].leave, duration: 0.5, onComplete: done });
 };
+
+// date picker
+
+const inputRef = ref<HTMLInputElement>();
+const calendarInstance = ref<FlatpickrInstance>();
+// ações do calendário
+const prepareDatePicker = () => {
+    if (props.calendar || (props.rangeDate && inputRef.value)) {
+        const localConfig = cloneDeep(props.configCalendar);
+        const config = localConfig;
+        config.mode = props.rangeDate ? 'range' : 'single';
+        calendarInstance.value = flatpickr(inputRef.value as Node, config);
+    }
+};
+
+onMounted(() => prepareDatePicker());
+
+const isReadOnlyLocal = computed(() => {
+    return props.calendar || props.rangeDate ? true : props.isReadOnly;
+});
 </script>
 
 <style scoped lang="scss">
@@ -205,9 +180,6 @@ const leaveAnimationError = (el: Element, done: () => void) => {
 
             &:disabled {
                 @apply bg-zinc-100 text-zinc-400;
-            }
-            &:read-only {
-                @apply bg-zinc-50 text-zinc-600;
             }
         }
     }
